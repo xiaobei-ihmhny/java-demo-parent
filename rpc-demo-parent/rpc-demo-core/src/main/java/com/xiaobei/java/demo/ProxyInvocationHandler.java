@@ -24,6 +24,7 @@ public class ProxyInvocationHandler implements InvocationHandler {
         request.setClassName(method.getDeclaringClass().getName());
         request.setMethodName(method.getName());
         request.setParameters(args);
+        request.setVersion("V1.0");
         RpcNetTransport transport = new RpcNetTransport(host, port);
         return transport.send(request);
     }

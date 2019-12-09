@@ -28,6 +28,8 @@
         <rpc-demo.api.version>1.0-SNAPSHOT</rpc-demo.api.version>
         <rpc-demo.core.version>1.0-SNAPSHOT</rpc-demo.core.version>
         <guava.version>28.0-jre</guava.version>
+        <spring.version>5.0.0.RELEASE</spring.version>
+        <slf4j-log4j12.version>1.7.26</slf4j-log4j12.version>
     </properties>
 
     <dependencyManagement>
@@ -52,6 +54,16 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j-log4j12.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
