@@ -2,26 +2,27 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <parent>
         <artifactId>rpc-demo-dependencies-bom</artifactId>
         <groupId>com.xiaobei.java.demo</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.xiaobei.java.demo</groupId>
-    <artifactId>rpc-demo-parent</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <modules>
-        <module>rpc-demo-api</module>
-        <module>rpc-demo-core</module>
-        <module>rpc-demo-client</module>
-        <module>rpc-demo-provider</module>
-    </modules>
+    <artifactId>rpc-demo-core</artifactId>
 
-    <name>rpc-demo-parent</name>
+    <name>rpc-demo-core</name>
     <url>http://www.example.com</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
