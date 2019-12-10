@@ -1,12 +1,9 @@
 package com.xiaobei.java.demo;
 
-import org.springframework.util.StringUtils;
-
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.Map;
 
@@ -33,7 +30,7 @@ public class PublisherProcessorHandler implements Runnable {
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)){
             // 从客户端拿到请求信息
             RpcRequest request = (RpcRequest)objectInputStream.readObject();
-            Object result = invoke(request);
+            Object result = PublishProcessorHandlerUtils.invoke(rpcServiceMap, request);
             objectOutputStream.writeObject(result);
             objectOutputStream.flush();
         } catch (Exception e) {
@@ -41,32 +38,4 @@ public class PublisherProcessorHandler implements Runnable {
         }
     }
 
-    private Object invoke(RpcRequest request) throws Exception {
-        String className = request.getClassName();
-        String version = request.getVersion();
-        String serviceKey = className;
-        if(!StringUtils.isEmpty(version)) {
-            serviceKey = serviceKey + ":" + version;
-        }
-
-        Object service = rpcServiceMap.get(serviceKey);
-        if(null == service) {
-            throw new RuntimeException("service not found " + className);
-        }
-
-        String methodName = request.getMethodName();
-        Object[] parameters = request.getParameters();
-        Class<?> clazz = Class.forName(className);
-        Method method = null;
-        if(null != parameters) {
-            Class<?>[] parameterTypes = new Class[parameters.length];
-            for (int i = 0; i < parameterTypes.length; i++) {
-                parameterTypes[i] = parameters[i].getClass();
-            }
-            method = clazz.getMethod(methodName, parameterTypes);
-        } else {
-            method = clazz.getMethod(methodName);
-        }
-        return method.invoke(service, parameters);
-    }
 }

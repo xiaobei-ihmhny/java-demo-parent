@@ -12,9 +12,14 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("com.xiaobei.java.demo")
 public class SpringConfig {
 
-    @Bean(name = "rpcServer")
+    /*@Bean(name = "rpcServer")
     public RpcServer rpcServer() {
         return new RpcServer(8080);
+    }*/
+
+    @Bean(name = "nettyRpcServer")
+    public NettyRpcServer nettyRpcServer() {
+        return new NettyRpcServer(8080);
     }
 
 }
