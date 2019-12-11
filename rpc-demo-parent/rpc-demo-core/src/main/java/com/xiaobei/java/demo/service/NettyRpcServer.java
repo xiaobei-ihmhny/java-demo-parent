@@ -1,60 +1,41 @@
-package com.xiaobei.java.demo;
+package com.xiaobei.java.demo.service;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.xiaobei.java.demo.RpcService;
+import com.xiaobei.java.demo.registry.IRegistry;
+import com.xiaobei.java.demo.registry.ZookeeperRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.*;
 
 /**
  *
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
  * @date 2019-12-09 21:27:27
  */
-public class RpcServer implements ApplicationContextAware, InitializingBean {
+@SuppressWarnings("ALL")
+public class NettyRpcServer implements ApplicationContextAware, InitializingBean {
 
     private Map<String, Object> rpcServiceMap = new HashMap<>();
 
-
-    ThreadFactory threadFactory = new ThreadFactoryBuilder()
-            .setNameFormat("rpc-demo-pool-%d")
-            .build();
-
-    ExecutorService executorService =
-            new ThreadPoolExecutor(5,
-                    100,
-                    60L,
-                    TimeUnit.SECONDS,
-                    new LinkedBlockingQueue<>(1024),
-                    threadFactory,
-                    new ThreadPoolExecutor.AbortPolicy());
-
     private int port;
 
-    public RpcServer(int port) {
+    private IRegistry registry = new ZookeeperRegistry();
+
+    public NettyRpcServer(int port) {
         this.port = port;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        try {
-            ServerSocket serverSocket = new ServerSocket(port);
-            while(true) {
-                Socket socket = serverSocket.accept();
-                executorService.submit(new PublisherProcessorHandler(rpcServiceMap, socket));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        new NettyServer(rpcServiceMap).start(port);
     }
 
     @Override
@@ -70,7 +51,19 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                     name = name + ":" + version;
                 }
                 rpcServiceMap.put(name, serviceBean);
+                // 将服务注册到zookeeper
+                String serviceAddress = getLocalHost() + ":" + port;
+                registry.registry(name, serviceAddress);
             }
         }
+    }
+
+    public String getLocalHost() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

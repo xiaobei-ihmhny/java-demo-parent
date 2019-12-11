@@ -1,5 +1,6 @@
-package com.xiaobei.java.demo;
+package com.xiaobei.java.demo.service;
 
+import com.xiaobei.java.demo.RpcRequest;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

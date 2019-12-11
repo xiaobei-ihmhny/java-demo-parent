@@ -1,5 +1,6 @@
-package com.xiaobei.java.demo;
+package com.xiaobei.java.demo.client;
 
+import com.xiaobei.java.demo.RpcRequest;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -13,16 +14,7 @@ import java.lang.reflect.Method;
  */
 public class ProxyInvocationHandler extends SimpleChannelInboundHandler<Object> implements InvocationHandler {
 
-    private String host;
-
-    private int port;
-
     private static Object result;
-
-    public ProxyInvocationHandler(String host, int port) {
-        this.host = host;
-        this.port = port;
-    }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -30,8 +22,8 @@ public class ProxyInvocationHandler extends SimpleChannelInboundHandler<Object> 
         request.setClassName(method.getDeclaringClass().getName());
         request.setMethodName(method.getName());
         request.setParameters(args);
-        request.setVersion("V2.0");
-        new NettyClient(request).start(host,port);
+        request.setVersion("V1.0");
+        new NettyClient(request).start();
         return result;
     }
 

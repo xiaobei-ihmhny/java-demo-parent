@@ -1,4 +1,4 @@
-package com.xiaobei.java.demo;
+package com.xiaobei.java.demo.service;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

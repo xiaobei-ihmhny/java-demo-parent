@@ -1,5 +1,6 @@
-package com.xiaobei.java.demo;
+package com.xiaobei.java.demo.service;
 
+import com.xiaobei.java.demo.RpcRequest;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;

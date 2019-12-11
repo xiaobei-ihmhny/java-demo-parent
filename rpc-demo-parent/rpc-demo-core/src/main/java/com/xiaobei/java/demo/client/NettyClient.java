@@ -1,5 +1,8 @@
-package com.xiaobei.java.demo;
+package com.xiaobei.java.demo.client;
 
+import com.xiaobei.java.demo.RpcRequest;
+import com.xiaobei.java.demo.discovery.IDiscovery;
+import com.xiaobei.java.demo.discovery.ZookeeperDiscovery;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,6 +14,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import org.springframework.util.StringUtils;
 
 import java.net.InetSocketAddress;
 
@@ -22,24 +26,29 @@ public class NettyClient {
 
     private RpcRequest rpcRequest;
 
+    private IDiscovery discovery = new ZookeeperDiscovery();
+
     public NettyClient(RpcRequest rpcRequest) {
         this.rpcRequest = rpcRequest;
     }
 
-    public void start(String host, int port) {
+    public void start() {
+        String[] serviceAddress = getServiceAddress();
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
-                    .remoteAddress(new InetSocketAddress(host, port))
+                    .remoteAddress(new InetSocketAddress(
+                            serviceAddress[0],
+                            Integer.parseInt(serviceAddress[1])))
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.cacheDisabled(null)));
                             pipeline.addLast(new ObjectEncoder());
-                            pipeline.addLast(new ProxyInvocationHandler(host, port));
+                            pipeline.addLast(new ProxyInvocationHandler());
                         }
                     });
             ChannelFuture future = bootstrap.connect().sync();
@@ -55,5 +64,18 @@ public class NettyClient {
                 e.printStackTrace();
             }
         }
+    }
+
+    private String[] getServiceAddress() {
+        String serviceName = rpcRequest.getClassName();
+        String version = rpcRequest.getVersion();
+        if(!StringUtils.isEmpty(version)) {
+            serviceName = serviceName + ":" + version;
+        }
+        String service = discovery.discovery(serviceName);
+        if(StringUtils.isEmpty(service)) {
+            throw new RuntimeException("服务不存在" + serviceName);
+        }
+        return service.split(":");
     }
 }
