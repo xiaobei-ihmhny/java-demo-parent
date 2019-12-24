@@ -13,10 +13,11 @@ public class UnsafeDemo {
     /**
      * 如果对象中的字段值与期望的值相等，
      * 则将字段值修改为update，然后返回true；否则返回false;
-     * @param object 指定的对象
-     * @param offset 对象中的字段的偏移量
-     * @param expected 对象改变前的期望值
-     * @param update 对象满足期望值时要修改的值
+     * Unsafe类中CAS方法都是native方法，需要通过CAS原子指令完成
+     * @param object 需要修改的对象
+     * @param offset 需要修改的字段到对象头的偏移量（通过偏移量可以快速定位修改的是哪个字段）
+     * @param expected 期望值
+     * @param update 要设置的值
      * @return 是否修改成功
      */
     public final native boolean compareAndSwapInt(Object object, long offset, int expected, int update);

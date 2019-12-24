@@ -3,6 +3,8 @@ package com.xiaobei.java.demo;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -16,20 +18,35 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AtomicIntegerDemo {
 
-    private static final long valueOffset;
+    public static void main(String[] args) throws InterruptedException {
+        AtomicInteger ai = new AtomicInteger();
+        List<Thread> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Thread t = new Thread(new Accumlator(ai));
+            list.add(t);
+            t.start();
+        }
 
-    static {
-        try {
-            Field field = Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            Unsafe unsafe = (Unsafe)field.get(null);
-            valueOffset = unsafe.objectFieldOffset
-                    (AtomicInteger.class.getDeclaredField("value"));
-        } catch (Exception ex) { throw new Error(ex); }
+        for(Thread t : list) {
+            t.join();
+        }
+        System.out.println(ai.get());
+
     }
 
-    public static void main(String[] args) {
-        AtomicInteger atomicInteger = new AtomicInteger();
+    static class Accumlator implements Runnable {
 
+        private AtomicInteger ai;
+
+        public Accumlator(AtomicInteger ai) {
+            this.ai = ai;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 1000; i++) {
+                ai.incrementAndGet();
+            }
+        }
     }
 }
