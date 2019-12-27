@@ -1,8 +1,5 @@
 package com.xiaobei.java.demo;
 
-import sun.misc.Unsafe;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,6 +15,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AtomicIntegerDemo {
 
+    /**
+     * 程序执行结果为10000（10个线程，每个线程对AtomicInteger增加1000），
+     * 如果直接使用int或Integer，最终结果值可能小于10000
+     * @param args
+     * @throws InterruptedException
+     */
     public static void main(String[] args) throws InterruptedException {
         AtomicInteger ai = new AtomicInteger();
         List<Thread> list = new ArrayList<>();
@@ -45,6 +48,7 @@ public class AtomicIntegerDemo {
         @Override
         public void run() {
             for (int i = 0; i < 1000; i++) {
+                // 以原子的方式对int值进行自增
                 ai.incrementAndGet();
             }
         }

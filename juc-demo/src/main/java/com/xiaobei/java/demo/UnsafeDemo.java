@@ -1,5 +1,7 @@
 package com.xiaobei.java.demo;
 
+import java.math.BigDecimal;
+
 /**
  * // TODO https://segmentfault.com/a/1190000015815012 未完
  * <p>{@link sun.misc.Unsafe} 类来源于sun.misc包。该类封装了很多类似指针的操作，
@@ -7,6 +9,7 @@ package com.xiaobei.java.demo;
  * 所以这也是该类命名为Unsafe的原因之一。
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
  * @date 2019-12-23 22:51:51
+ *
  */
 public class UnsafeDemo {
 
@@ -21,4 +24,11 @@ public class UnsafeDemo {
      * @return 是否修改成功
      */
     public final native boolean compareAndSwapInt(Object object, long offset, int expected, int update);
+
+    public static void main(String[] args) {
+        Demo demo = new Demo();
+        demo.setPrice(BigDecimal.valueOf(1.000));
+        System.out.println(demo);
+        System.out.println(BigDecimal.ONE.compareTo(demo.getPrice()));
+    }
 }
