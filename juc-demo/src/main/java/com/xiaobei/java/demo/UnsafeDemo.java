@@ -1,6 +1,7 @@
 package com.xiaobei.java.demo;
 
 import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * // TODO https://segmentfault.com/a/1190000015815012 未完
@@ -25,10 +26,30 @@ public class UnsafeDemo {
      */
     public final native boolean compareAndSwapInt(Object object, long offset, int expected, int update);
 
+    private static final int ASHIFT = 7;
+
+    private static final int MMASK = 0xff;
+
+    private static final int NCPU = Runtime.getRuntime().availableProcessors();
+
+    static final int FULL = (NCPU >= (MMASK << 1)) ? MMASK : NCPU >>> 1;
+
     public static void main(String[] args) {
         Demo demo = new Demo();
         demo.setPrice(BigDecimal.valueOf(1.000));
         System.out.println(demo);
         System.out.println(BigDecimal.ONE.compareTo(demo.getPrice()));
+        System.out.println(1 << 7);
+        System.out.println(" mmask: "+ MMASK);
+        System.out.println(" mmask << 1: "+ (MMASK << 1));
+        System.out.println(" 1<<(31-ASHIFT): "+ (1<<(31-7)));
+        System.out.println(" cpu>>>1: "+ (8>>>1));
+        System.out.println(" 1 << 10: "+ (1 << 10));
+        System.out.println("================");
+        System.out.println("数组的起始大小：" + ((1 + 2) << ASHIFT));
+
+        String[] seoArgs = new String[2];
+        seoArgs[0] = "22";
+        seoArgs[1] = "22";
     }
 }
