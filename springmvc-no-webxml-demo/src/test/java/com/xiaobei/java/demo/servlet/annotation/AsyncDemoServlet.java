@@ -14,7 +14,7 @@ import java.util.Date;
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
  * @date 2020-03-15 09:38:38
  */
-@WebServlet(urlPatterns = "/demo", asyncSupported = true)
+//@WebServlet(urlPatterns = "/demo", asyncSupported = true)
 public class AsyncDemoServlet extends HttpServlet {
 
     @Override
