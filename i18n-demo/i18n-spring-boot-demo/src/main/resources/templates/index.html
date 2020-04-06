@@ -5,7 +5,14 @@
     <title>Title</title>
 </head>
 <body>
-
-<p><label th:text="#{welcome}"></label></p>
+    <form action="/changeSessionLanguage" method="get">
+        <input name="lang" type="hidden" value="zh"/>
+        <button>中文</button>
+    </form>
+    <form action="/changeSessionLanguage" method="get">
+        <input name="lang" type="hidden" value="en"/>
+        <button>english</button>
+    </form>
+    <p><label th:text="#{welcome}"></label></p>
 </body>
 </html>
