@@ -59,26 +59,26 @@ public class MessageSourceConfig implements WebMvcConfigurer {
      * 使用参数修改用户的区域，这种方式需要改变页面url地址，不太好
      * @return
      */
-//    @Bean
-//    public LocaleChangeInterceptor localeChangeInterceptor() {
-//        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-//        // 设置请求地址的参数 默认为：locale
-//        lci.setParamName(LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
-//        return lci;
-//    }
-//
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(localeChangeInterceptor());
-//    }
-
     @Bean
-    public LocaleLanguageInterceptor localeLanguageInterceptor() {
-        return new LocaleLanguageInterceptor();
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+        // 设置请求地址的参数 默认为：locale
+        lci.setParamName(LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
+        return lci;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeLanguageInterceptor());
+        registry.addInterceptor(localeChangeInterceptor());
     }
+
+//    @Bean
+//    public LocaleLanguageInterceptor localeLanguageInterceptor() {
+//        return new LocaleLanguageInterceptor();
+//    }
+//
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(localeLanguageInterceptor());
+//    }
 }

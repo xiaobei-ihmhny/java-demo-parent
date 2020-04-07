@@ -5,14 +5,10 @@
     <title>Title</title>
 </head>
 <body>
-    <form action="/changeSessionLanguage" method="get">
-        <input name="lang" type="hidden" value="zh"/>
-        <button>中文</button>
-    </form>
-    <form action="/changeSessionLanguage" method="get">
-        <input name="lang" type="hidden" value="en"/>
-        <button>english</button>
-    </form>
-    <p><label th:text="#{welcome}"></label></p>
+    <a href="?locale=en_US" > 英语</a>
+    <a href="?locale=zh_CN" > 中文</a>
+    <!--<a href="$setLang:en" > 英语</a>-->
+    <!--<a href="$setLang:cn" > 中文</a>-->
+<p><label th:text="#{welcome}"></label></p>
 </body>
 </html>

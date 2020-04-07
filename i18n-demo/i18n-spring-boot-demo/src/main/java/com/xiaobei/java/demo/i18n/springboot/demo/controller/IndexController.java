@@ -39,7 +39,7 @@ public class IndexController {
         return "index";
     }
 
-    @GetMapping("better")
+    @GetMapping("new/better")
     public String better() {
         String welcome = messageSourceService.getMessage("welcome");
         System.out.printf("获取到的信息为：%s\n", welcome);
