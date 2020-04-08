@@ -39,6 +39,14 @@ public class IndexController {
         return "index";
     }
 
+    @GetMapping("home")
+    public String home() {
+        Locale locale = LocaleContextHolder.getLocale();
+        String welcome = messageSource.getMessage("home", null, locale);
+        System.out.printf("获取到的信息为：%s\n", welcome);
+        return "home";
+    }
+
     @GetMapping("new/better")
     public String better() {
         String welcome = messageSourceService.getMessage("welcome");
