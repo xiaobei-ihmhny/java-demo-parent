@@ -4,10 +4,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- 这个id名称必须为 messageSource -->
+    <!-- 这个id名称最好为 messageSource -->
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="i18n.resources"/>
+        <property name="basename" value="i18n.messages"/>
     </bean>
 
 </beans>
