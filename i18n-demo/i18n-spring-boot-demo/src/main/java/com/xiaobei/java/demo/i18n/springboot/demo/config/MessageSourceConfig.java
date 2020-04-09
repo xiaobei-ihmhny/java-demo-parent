@@ -24,6 +24,7 @@ import java.util.Locale;
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
  * @date 2020/4/7 6:48
  */
+@SuppressWarnings("ALL")
 @Configuration
 public class MessageSourceConfig implements WebMvcConfigurer {
 

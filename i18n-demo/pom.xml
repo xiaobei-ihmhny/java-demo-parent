@@ -6,7 +6,12 @@
 
     <groupId>com.xiaobei.java.demo</groupId>
     <artifactId>i18n-demo</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>i18n-java-demo</module>
+        <module>i18n-spring-demo</module>
+    </modules>
 
     <name>i18n-demo</name>
     <url>http://www.example.com</url>
