@@ -36,8 +36,8 @@ public class MessageSourceConfig {
     }
 
     /**
-     * TODO 目前的刷新功能测试稍有问题
      * https://www.jianshu.com/p/52712dedb0bd
+     * https://blog.csdn.net/djrm11/article/details/96638337
      * @return
      */
     @Bean(name = "messageSource")
@@ -45,9 +45,8 @@ public class MessageSourceConfig {
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource
                 = new ReloadableResourceBundleMessageSource();
-        // 如果需要指定类路径，basename的开头需要是"classpath:"
-        messageSource.setBasenames("file:E:\\project\\i18n\\messages\\messages_zh_CN.properties",
-                "file:E:\\project\\i18n\\messages\\messages_en_US.properties");
+        // url协议方式
+        messageSource.setBasename("file:/E:/project/i18n/messages");
         // 设置缓存时间
         messageSource.setCacheSeconds(1);
         return messageSource;
