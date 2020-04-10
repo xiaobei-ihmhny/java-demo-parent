@@ -58,4 +58,19 @@
         <!-- thymeleaf相关依赖 end -->
     </dependencies>
 
+    <build>
+
+        <plugins>
+        <!-- Maven war 插件 -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+                <!-- 忽略错误，当web.xml不存在时 -->
+                <failOnMissingWebXml>false</failOnMissingWebXml>
+            </configuration>
+        </plugin>
+        </plugins>
+    </build>
+
 </project>
