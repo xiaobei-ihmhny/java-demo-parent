@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DemoController {
 
-    @GetMapping("index")
-    public String index() {
+    @GetMapping("test")
+    public String test() {
         return "hello world";
     }
+
+
 }

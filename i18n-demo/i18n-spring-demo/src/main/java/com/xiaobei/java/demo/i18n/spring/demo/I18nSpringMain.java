@@ -1,6 +1,6 @@
 package com.xiaobei.java.demo.i18n.spring.demo;
 
-import com.xiaobei.java.demo.i18n.spring.config.MessageSourceConfig;
+import com.xiaobei.java.demo.i18n.spring.config.i18n.MessageSourceConfig;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -19,7 +19,8 @@ public class I18nSpringMain {
 //        classPathXmlApplicationContext();
 //        classPathXmlApplicationContext2();
 //        annotationConfigApplicationContextProfile("test1");
-        annotationConfigApplicationContextProfile("test2");
+//        annotationConfigApplicationContextProfile("test2");
+        annotationConfigApplicationContextProfile("test3");
     }
 
     /**

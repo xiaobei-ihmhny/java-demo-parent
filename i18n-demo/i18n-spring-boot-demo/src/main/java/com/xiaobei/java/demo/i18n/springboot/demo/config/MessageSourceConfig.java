@@ -1,8 +1,10 @@
 package com.xiaobei.java.demo.i18n.springboot.demo.config;
 
 import com.xiaobei.java.demo.i18n.springboot.demo.interceptor.LocaleLanguageInterceptor;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -39,6 +41,17 @@ public class MessageSourceConfig implements WebMvcConfigurer {
 //        // 设置默认的区域
 //        localeResolver.setDefaultLocale(Locale.CHINA);
 //        return localeResolver;
+//    }
+
+//    @Bean
+//    public MessageSource messageSource() {
+//        ReloadableResourceBundleMessageSource messageSource
+//                = new ReloadableResourceBundleMessageSource();
+//        // url协议方式 文件地址
+//        messageSource.setBasename("file:/D:/project/i18n/messages");
+//        // 设置缓存时间
+//        messageSource.setCacheSeconds(1);
+//        return messageSource;
 //    }
 
     /**

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <a href="?locale=en_US" > en</a>
+    <a href="?locale=zh_CN" > 中文</a>
+    <p><a href="home" th:text="#{home}"/></p>
+    <!--<a href="$setLang:en" > 英语</a>-->
+    <!--<a href="$setLang:cn" > 中文</a>-->
+<p><label th:text="#{welcome}"></label></p>
+</body>
+</html>
