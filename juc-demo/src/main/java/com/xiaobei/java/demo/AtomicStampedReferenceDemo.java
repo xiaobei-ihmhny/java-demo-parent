@@ -88,7 +88,7 @@ public class AtomicStampedReferenceDemo {
     //---------------------------- 以下为测试解决ABA问题 ----------------------------
 
     /**
-     * 创建{@link AtomicStampedReference}对象，初始引用的Integer值为1，版本号为0
+     * 一创建{@link AtomicStampedReference}对象，初始引用的Integer值为1，版本号为0
      */
     public static AtomicStampedReference<Integer> atomicStampedRef
             = new AtomicStampedReference<>(1, 0);
@@ -137,7 +137,7 @@ public class AtomicStampedReferenceDemo {
 
 
     /**
-     * 创建{@link AtomicStampedReference}对象，初始引用的Integer值为1，版本号为0
+     * 一创建{@link AtomicStampedReference}对象，初始引用的Integer值为1，版本号为0
      */
     public static AtomicMarkableReference<Integer> atomicMarkableRef
             = new AtomicMarkableReference<>(1, false);
