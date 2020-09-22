@@ -18,16 +18,29 @@ public class ThymeleafController {
     @Autowired
     private MessageSource messageSource;
 
+    /**
+     * 模板引擎相关
+     * @return
+     */
     @GetMapping("index")
     public String index() {
         return "index";
     }
 
+    /**
+     * 模板引擎相关
+     * @return
+     */
     @GetMapping("home")
     public String home() {
         return "home";
     }
 
+    /**
+     * 纯接口相关请求
+     * @param code
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/code/{code}")
     public String json(@PathVariable("code") String code) {

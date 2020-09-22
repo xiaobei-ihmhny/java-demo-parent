@@ -49,43 +49,6 @@ public class MessageSourceConfig implements WebMvcConfigurer {
     }
 
     /**
-     * https://www.jianshu.com/p/52712dedb0bd
-     * https://blog.csdn.net/djrm11/article/details/96638337
-     * @return
-     */
-    @Profile("test2")
-    @Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource
-                = new ReloadableResourceBundleMessageSource();
-        // url协议方式 文件地址
-        messageSource.setBasename("file:/D:/project/i18n/messages");
-        // 设置缓存时间
-        messageSource.setCacheSeconds(8);
-        // 设置编码
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
-
-    /**
-     * 使用网络地址
-     * @return
-     */
-    @Profile("test3")
-    @Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
-    public MessageSource urlMessageSource() {
-        ReloadableResourceBundleMessageSource messageSource
-                = new ReloadableResourceBundleMessageSource();
-        // url协议方式
-        messageSource.setBasename("https://oss-test1.s3.cn-north-1.jdcloud-oss.com/i18n/messages");
-        // 设置缓存时间
-        messageSource.setCacheSeconds(1);
-        // 设置编码
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
-
-    /**
      * {@link ResourceBundleMessageSource} 使用示例
      * 注意：其只能支持 {@code classpath} 形式的 {@code basename}
      * @return
