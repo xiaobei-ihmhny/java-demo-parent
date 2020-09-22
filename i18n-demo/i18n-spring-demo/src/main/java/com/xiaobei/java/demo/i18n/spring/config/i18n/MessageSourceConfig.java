@@ -4,7 +4,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -14,6 +16,8 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import java.util.Locale;
 
 /**
+ * {@link ReloadableResourceBundleMessageSource} 会根据缓存时间是否
+ *
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
  * @date 2020/4/9 23:01
  */
@@ -31,14 +35,16 @@ public class MessageSourceConfig implements WebMvcConfigurer {
      *
      * @return
      */
-    @Bean(name = "messageSource")
     @Profile("test1")
+    @Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
     public MessageSource classPathMessageSource() {
         ReloadableResourceBundleMessageSource messageSource
                 = new ReloadableResourceBundleMessageSource();
         // 如果需要指定类路径，basename的开头需要是"classpath:"
         messageSource.setBasename("classpath:i18n/messages");
         messageSource.setCacheSeconds(5);
+        // 设置编码
+        messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
 
@@ -47,15 +53,17 @@ public class MessageSourceConfig implements WebMvcConfigurer {
      * https://blog.csdn.net/djrm11/article/details/96638337
      * @return
      */
-    @Bean(name = "messageSource")
     @Profile("test2")
+    @Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource
                 = new ReloadableResourceBundleMessageSource();
         // url协议方式 文件地址
         messageSource.setBasename("file:/D:/project/i18n/messages");
         // 设置缓存时间
-        messageSource.setCacheSeconds(1);
+        messageSource.setCacheSeconds(8);
+        // 设置编码
+        messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
 
@@ -63,8 +71,8 @@ public class MessageSourceConfig implements WebMvcConfigurer {
      * 使用网络地址
      * @return
      */
-    @Bean(name = "messageSource")
     @Profile("test3")
+    @Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
     public MessageSource urlMessageSource() {
         ReloadableResourceBundleMessageSource messageSource
                 = new ReloadableResourceBundleMessageSource();
@@ -72,6 +80,23 @@ public class MessageSourceConfig implements WebMvcConfigurer {
         messageSource.setBasename("https://oss-test1.s3.cn-north-1.jdcloud-oss.com/i18n/messages");
         // 设置缓存时间
         messageSource.setCacheSeconds(1);
+        // 设置编码
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
+    }
+
+    /**
+     * {@link ResourceBundleMessageSource} 使用示例
+     * 注意：其只能支持 {@code classpath} 形式的 {@code basename}
+     * @return
+     */
+    @Profile("test4")
+    @Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
+    public MessageSource resourceBundleMessageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        // 只支持 classpath 形式的 basename
+        messageSource.setBasename("i18n/messages");
+        messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
 
