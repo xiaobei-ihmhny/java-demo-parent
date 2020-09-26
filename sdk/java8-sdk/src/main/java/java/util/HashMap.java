@@ -253,6 +253,11 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * than 2 and should be at least 8 to mesh with assumptions in
      * tree removal about conversion back to plain bins upon
      * shrinkage.
+     *
+     * 使用红黑树存储而不是使用链表存储的容器计数阈值，一个节点中的元素个数
+     * 达到该值时，该节点的结构会从链表转换为红黑树。该值应该大于2并且至少为8
+     * 才能与树删除中的假设（即收缩时转换回原始链表）相啮合。
+     * TODO 最后一句话是什么意思？2020年9月27日6:45:17
      */
     static final int TREEIFY_THRESHOLD = 8;
 
@@ -332,6 +337,24 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * cheapest possible way to reduce systematic lossage, as well as
      * to incorporate impact of the highest bits that would otherwise
      * never be used in index calculations because of table bounds.
+     *
+     * <p>
+     *     从上面的代码可以看到 key 的 hash 值的计算方法。key 的 hash 值高16位不变，
+     *     低16们与高16们异或作为key的最终hash值。
+     *     （h >>> 16，表示无符号右移16位，高位补0，任何数跟0异或都是其本身，
+     *     因此key的hash值高16位不变。）
+     * </p>
+     *
+     * <h2>这么做的原因</h2>
+     * 这个与{@link HashMap} 中 {@link HashMap#table}下标的计算有关。
+     * {@code n = table.length; index = (n - 1) & hash;}
+     * 因为，{@link HashMap#table} 的长度都是2的幂，因此index仅与hash值的低n位有关，
+     * hash值的高们都被与操作置为0了。假设 {@code table.length = 2 ^ 4 = 16}，
+     * 只有hash值的低4位参与的运算。这样做很容易产生碰撞。
+     * 设计都权衡了 speed，utility and quality，将高16位与低16位异或减少这种影响。
+     * 设计者考虑到现在的hashCode分布的已经很不错了，而且当发生较大碰撞时也用树形存储降低了冲突。
+     * 仅仅异或一下，既减少了系统的开销，也不会造成因为高位没有参与下标运算（table长度比较小时），
+     * 从而引起的碰撞。
      */
     static final int hash(Object key) {
         int h;
@@ -631,43 +654,63 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
         if ((tab = table) == null || (n = tab.length) == 0)
-            // 当 table 为空时，需要进行扩容操作 {@link #resize()}
+            // 当 table 为空时，需要进行扩容操作 {@link #resize()} (第一次put时)
             n = (tab = resize()).length;
-        if ((p = tab[i = (n - 1) & hash]) == null) // 计算出的数组位置上为空
-            tab[i] = newNode(hash, key, value, null);// 直接将元素加入
+        if ((p = tab[i = (n - 1) & hash]) == null) // 若计算出的数组位置上为null
+            tab[i] = newNode(hash, key, value, null);// 则直接将元素加入
         else {
-            // TODO 未完
+            // 如何计算出的数组对应下标不为null，
             Node<K,V> e; K k;
+            // 若添加元素的 hash 和 key 与当前链表头节点相同，
             if (p.hash == hash &&
                     ((k = p.key) == key || (key != null && key.equals(k))))
+                // 将当前链表的头节点保存到变量 e 中
                 e = p;
-            else if (p instanceof TreeNode)
+            else if (p instanceof TreeNode)// 如果当前节点类型为红黑树
+                // TODO 进行红黑树处理
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             else {
+                // 不属于红黑树，则为链表，此时遍历整个节点
                 for (int binCount = 0; ; ++binCount) {
+                    // 找到链表的尾部，即当前节点的后继节点为null
                     if ((e = p.next) == null) {
+                        // 将当前节点放到原链表的尾部
                         p.next = newNode(hash, key, value, null);
+                        // 判断当前节点倒数是否达到或超过了 {@code TREEIFY_THRESHOLD - 1} 个
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                            // 若满足条件，则将当前位置处的链表结构转换为红黑树
                             treeifyBin(tab, hash);
                         break;
                     }
+                    // 说明当前节点的后续节点不为null
+                    // 若添加元素的 hash 和 key 与当前链表节点相同，
                     if (e.hash == hash &&
                             ((k = e.key) == key || (key != null && key.equals(k))))
+                        // 直接跳出循环
                         break;
                     p = e;
                 }
             }
+            // 当 e 不为 null 时，说明当前链表中的元素与当前保存元素的 key 相同
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
                 if (!onlyIfAbsent || oldValue == null)
+                    // 直接将相应的值替换为新值
                     e.value = value;
+                // 扩展点，用于子类扩展，参见：{@link LinkedHashMap#afterNodeAccess}
                 afterNodeAccess(e);
+                // 返回旧值
                 return oldValue;
             }
         }
         ++modCount;
+        // 判断数组中当前的元素个数是否满足扩容操作
+        // 如果元素个数为 12，数组长度为16，扩容因子为 0.75，
+        // 则会进行扩容操作
         if (++size > threshold)
+            // 进行扩容操作
             resize();
+        // 扩展点，用于子类扩展，参见：{@link LinkedHashMap.afterNodeInsertion}
         afterNodeInsertion(evict);
         return null;
     }
