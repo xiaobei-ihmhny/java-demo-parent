@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
@@ -76,46 +75,4 @@ public class HashMapDemo {
         System.out.println(map);
     }
 
-    static class HashTestDomain {
-        private Long id;
-
-        private String name;
-
-        public Long getId() {
-            return id;
-        }
-
-        public HashTestDomain setId(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public HashTestDomain setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof HashTestDomain)) return false;
-            HashTestDomain that = (HashTestDomain) o;
-            return Objects.equals(id, that.id) &&
-                    Objects.equals(name, that.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return (int)(id % 10);
-        }
-
-        @Override
-        public String toString() {
-            return "[id=" + id + ", name='" + name + "]";
-        }
-    }
 }
