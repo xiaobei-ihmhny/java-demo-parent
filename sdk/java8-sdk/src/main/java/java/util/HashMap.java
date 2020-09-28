@@ -133,6 +133,8 @@ import java.util.function.Function;
  * @see     TreeMap
  * @see     Hashtable
  * @since   1.2
+ *
+ * @version java 1.8_241
  */
 public class HashMap<K,V> extends AbstractMap<K,V>
         implements Map<K,V>, Cloneable, Serializable {
@@ -662,6 +664,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             // 如何计算出的数组对应下标不为null，
             Node<K,V> e; K k;
             // 若添加元素的 hash 和 key 与当前链表头节点相同，
+            // 为什么要比较 {@code p.hash == hash} ？
+            //
             if (p.hash == hash &&
                     ((k = p.key) == key || (key != null && key.equals(k))))
                 // 将当前链表的头节点保存到变量 e 中
