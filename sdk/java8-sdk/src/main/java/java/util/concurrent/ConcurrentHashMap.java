@@ -263,6 +263,8 @@ import java.util.stream.Stream;
  * @author Doug Lea
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
+ *
+ * @version java 1.8_241
  */
 public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
         implements ConcurrentMap<K,V>, Serializable {
@@ -619,6 +621,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     static class Node<K,V> implements Map.Entry<K,V> {
         final int hash;
         final K key;
+        // 使用 {@code volatile} 修饰 保证其内存可见性
         volatile V val;
         volatile Node<K,V> next;
 
@@ -791,6 +794,11 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
      * when table is null, holds the initial table size to use upon
      * creation, or 0 for default. After initialization, holds the
      * next element count value upon which to resize the table.
+     *
+     * <p> 控制hash表的初始化和扩容。如果为负数，则表正在被初始化或扩容：
+     * -1 表示初始化，或 -(1 + 处于活动状态的扩容线程数)。否则，
+     * 当table为null时，保留创建时的初始化表容量大小，或者默认为0。
+     * 初始化之后，保存下次扩容时表需要扩大到的容量大小。
      */
     private transient volatile int sizeCtl;
 
@@ -885,6 +893,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
      * @param concurrencyLevel the estimated number of concurrently
      * updating threads. The implementation may use this value as
      * a sizing hint.
+     * @param concurrencyLevel 估计的并发更新线程数，默认为1，此字段提供修改
      * @throws IllegalArgumentException if the initial capacity is
      * negative or the load factor or concurrencyLevel are
      * nonpositive
@@ -1009,17 +1018,24 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     /** Implementation for put and putIfAbsent */
     final V putVal(K key, V value, boolean onlyIfAbsent) {
         if (key == null || value == null) throw new NullPointerException();
+        // 计算当前key的hash值，相比 HashMap 多了 HASH_BITS 的参与
+        // java.util.concurrent.ConcurrentHashMap.HASH_BITS = Integer.MAX_VALUE
         int hash = spread(key.hashCode());
         int binCount = 0;
         for (Node<K,V>[] tab = table;;) {
             Node<K,V> f; int n, i, fh;
             if (tab == null || (n = tab.length) == 0)
+                // 首次存放元素时，进行hash表的初始化
                 tab = initTable();
+            // 线程安全的获取hash表指定下标处的元素，并判断是否为null
             else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
+                // 通过 CAS 的方式更新hash表中指定的下标处的元素为当前存放的元素
                 if (casTabAt(tab, i, null,
                         new Node<K,V>(hash, key, value, null)))
                     break;                   // no lock when adding to empty bin
             }
+            // 说明当前下位置处已经存在元素
+            // TODO MOVED是什么东东？？？
             else if ((fh = f.hash) == MOVED)
                 tab = helpTransfer(tab, f);
             else {

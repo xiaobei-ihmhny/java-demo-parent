@@ -59,6 +59,8 @@ import java.util.function.Function;
  * @author Doug Lea
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
+ *
+ * @version java 1.8_241
  */
 public interface ConcurrentMap<K, V> extends Map<K, V> {
 
@@ -348,10 +350,16 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
      * attempt updates including potentially calling the remapping function
      * multiple times.
      *
+     * <p>当多个线程尝试进行更新（包括可能多次调用重新映射函数）时，
+     * 默认实现可以重试这些步骤。
+     *
      * <p>This implementation assumes that the ConcurrentMap cannot contain null
      * values and {@code get()} returning null unambiguously means the key is
      * absent. Implementations which support null values <strong>must</strong>
      * override this default implementation.
+     *
+     * <p>此实现假定ConcurrentMap不能包含null值，并且get（）明确返回null表示键不存在。
+     * 支持空值的实现必须覆盖此默认实现。
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException {@inheritDoc}
