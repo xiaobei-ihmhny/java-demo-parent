@@ -32,12 +32,12 @@ import com.sun.btrace.annotations.*;
 @BTrace
 public class TracingScript {
     @OnMethod(
-            clazz="org.fenixsoft.monitoring.BTraceTest",
+            clazz="org.fenixsoft.jvm.chapter4.BTraceTest",
             method="add",
             location=@Location(Kind.RETURN)
     )
 
-    public static void func(@Self org.fenixsoft.monitoring.BTraceTest instance,int a,int b,@Return int result) {
+    public static void func(@Self org.fenixsoft.jvm.chapter4.BTraceTest instance,int a,int b,@Return int result) {
         println("调用堆栈:");
         jstack();
         println(strcat("方法参数A:",str(a)));
