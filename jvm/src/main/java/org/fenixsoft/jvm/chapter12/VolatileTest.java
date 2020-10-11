@@ -15,7 +15,7 @@ public class VolatileTest {
 
     private static final int THREADS_COUNT = 20;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Thread[] threads = new Thread[THREADS_COUNT];
         for (int i = 0; i < THREADS_COUNT; i++) {
             threads[i] = new Thread(new Runnable() {
@@ -30,8 +30,12 @@ public class VolatileTest {
         }
 
         // 等待所有累加线程都结束
-        while (Thread.activeCount() > 1)
-            Thread.yield();
+        for(Thread thread : threads) {
+            thread.join();
+        }
+        // 等待所有累加线程都结束
+//        while (Thread.activeCount() > 1)
+//            Thread.yield();
 
         System.out.println(race);
     }
