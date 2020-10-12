@@ -13,6 +13,8 @@
         <module>java7-sdk</module>
         <module>java12-sdk</module>
         <module>openjdk16-sdk</module>
+        <module>openjdk12-sdk</module>
+        <module>openjdk15-sdk</module>
     </modules>
 
 
