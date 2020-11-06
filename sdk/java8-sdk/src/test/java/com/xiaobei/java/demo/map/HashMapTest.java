@@ -4,12 +4,23 @@ import org.junit.Test;
 
 import java.sql.SQLOutput;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
  * @date 2020/9/25 20:13
  */
 public class HashMapTest {
+
+    @Test
+    public void test() {
+        HashMap<String,String> map = new HashMap<>();
+        map.put(null,null);
+        System.out.println(map);
+        ConcurrentHashMap<String, String> concurrentHashMap = new ConcurrentHashMap<>();
+        concurrentHashMap.put("null", null);
+        System.out.println(concurrentHashMap);
+    }
 
     /**
      * <h2>运行结果：</h2>

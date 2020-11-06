@@ -737,7 +737,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * <a href="https://www.processon.com/diagraming/5f6e9c4df346fb166d0d0525">链表重分配分析</a>
      *
      * <h2>大致流程如下：</h2>
-     * 1. 根据现有的容量（table.length）和阈值（threshold）确定新的容器及阈值
+     * 1. 根据现有的容量（table.length）和阈值（threshold）确定新的容量及阈值
      * 2. 创建一个长度为新容器大小的空数组{@code Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];}，
      * 并直接赋值给实例变量 table
      *  2.1 如果是第一次添加元素，直接返回。

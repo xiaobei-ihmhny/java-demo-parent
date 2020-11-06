@@ -336,7 +336,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
 
         // Spread bits to regularize both segment and index locations,
         // using variant of single-word Wang/Jenkins hash.
-        // 使用单字Wang / Jenkins哈希的变体来扩展位以规范化段和索引位置。
+        // 使用单字 Wang/Jenkins 哈希的变体来扩展位以规范化段和索引位置。
         h += (h <<  15) ^ 0xffffcd7d;
         h ^= (h >>> 10);
         h += (h <<   3);
