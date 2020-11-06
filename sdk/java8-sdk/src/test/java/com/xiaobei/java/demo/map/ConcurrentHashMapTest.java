@@ -2,6 +2,9 @@ package com.xiaobei.java.demo.map;
 
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -12,10 +15,14 @@ public class ConcurrentHashMapTest {
 
     @Test
     public void test() {
+//        HashMap<String, String> map = new HashMap<>();
+//        Map<String, String> sync = Collections.synchronizedMap(map);
         System.out.println(resizeStamp(16));
     }
 
     static int resizeStamp(int n) {
-        return Integer.numberOfLeadingZeros(n) | (1 << (16 - 1));
+        int i = Integer.numberOfLeadingZeros(n);
+        System.out.println(i);
+        return i | (1 << (16 - 1));
     }
 }

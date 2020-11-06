@@ -2411,7 +2411,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
                     advance = false;
                 }
                 else if (U.compareAndSwapInt
-                        (this, TRANSFERINDEX, nextIndex,
+                         (this, TRANSFERINDEX, nextIndex,
                                 nextBound = (nextIndex > stride ?
                                         nextIndex - stride : 0))) {
                     bound = nextBound;
