@@ -29,7 +29,7 @@ import java.util.Set;
  */
 @Component
 @PropertySource(value = "classpath:/META-INF/redis.properties")
-public class RedisService implements InitializingBean, BeanFactoryAware, JedisCommands {
+public class RedisService implements BeanFactoryAware, JedisCommands {
 
     private JedisPool jedisPool;
 
@@ -41,6 +41,22 @@ public class RedisService implements InitializingBean, BeanFactoryAware, JedisCo
 
     @Value("${redis.password}")
     private String password;
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        if(password == null || "".equals(password)) {
+            jedisPool = new JedisPool(
+                    new JedisPoolConfig(), host, port, 10000);
+        } else {
+            jedisPool = new JedisPool(
+                    new JedisPoolConfig(), host, port, 10000, password);
+        }
+        if(beanFactory instanceof ConfigurableListableBeanFactory) {
+            ConfigurableListableBeanFactory listableBeanFactory =
+                    (ConfigurableListableBeanFactory) beanFactory;
+            listableBeanFactory.registerSingleton("jedisPool", jedisPool);
+        }
+    }
 
     /**
      * TODO 是否会存在资源泄露
@@ -900,25 +916,5 @@ public class RedisService implements InitializingBean, BeanFactoryAware, JedisCo
                 ", port=" + port +
                 ", password='" + password + '\'' +
                 '}';
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        if(password == null || "".equals(password)) {
-            jedisPool = new JedisPool(
-                    new JedisPoolConfig(), host, port, 10000);
-        } else {
-            jedisPool = new JedisPool(
-                    new JedisPoolConfig(), host, port, 10000, password);
-        }
-        if(beanFactory instanceof ConfigurableListableBeanFactory) {
-            ConfigurableListableBeanFactory listableBeanFactory =
-                    (ConfigurableListableBeanFactory) beanFactory;
-            listableBeanFactory.registerSingleton("jedisPool", jedisPool);
-        }
     }
 }
