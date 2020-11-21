@@ -12,6 +12,8 @@ import redis.clients.jedis.JedisSentinelPool;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -25,9 +27,10 @@ public class SentinelMain {
     @Bean
     public JedisSentinelPool pool(
             @Value("${spring.redis.sentinel.master}") String name,
+            @Value("${spring.redis.sentinel.password}") String password,
             @Value("${spring.redis.sentinel.nodes}") String[] sentinels) {
-        return new JedisSentinelPool(name,
-                Arrays.stream(sentinels).collect(Collectors.toSet()));
+        Set<String> sentinelSet = Arrays.stream(sentinels).collect(Collectors.toSet());
+        return new JedisSentinelPool(name, sentinelSet, password);
     }
 
     public static void main(String[] args) {
@@ -36,8 +39,9 @@ public class SentinelMain {
         applicationContext.refresh();
         JedisSentinelPool pool = applicationContext.getBean(JedisSentinelPool.class);
         Jedis jedis = pool.getResource();
-        jedis.set("xiaobei", "100");
-        System.out.println(jedis.get("xiaobei"));
+        String resultSet = jedis.get("xiaobei");
+        System.out.println(resultSet);
+        jedis.lpush("naTie", "111","222");
         applicationContext.close();
     }
 }

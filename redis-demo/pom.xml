@@ -7,6 +7,7 @@
     <groupId>com.xiaobei.middleware.redis</groupId>
     <artifactId>redis-demo</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -14,6 +15,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring.version>5.2.2.RELEASE</spring.version>
         <jedis.version>3.3.0</jedis.version>
+        <servlet-api.version>3.0.1</servlet-api.version>
     </properties>
 
     <dependencies>
@@ -29,6 +31,11 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>${jedis.version}</version>
@@ -38,6 +45,56 @@
             <artifactId>guava</artifactId>
             <version>28.2-jre</version>
         </dependency>
+
+        <!-- Servlet 3.0 API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <version>2.1</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Maven war 插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <!-- 忽略错误，当web.xml不存在时 -->
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+            <!-- Tomcat Maven 插件用于构建可执行 war -->
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <id>tomcat-run</id>
+                        <goals>
+                            <!-- 最终打包成可执行的jar包 -->
+                            <goal>exec-war-only</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <!-- ServletContext 路径 -->
+                            <path>/</path>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
