@@ -19,6 +19,7 @@
 <!--        <redisson.version>3.5.4</redisson.version>-->
         <lettuce.version>5.3.5.RELEASE</lettuce.version>
         <servlet-api.version>3.0.1</servlet-api.version>
+        <mysql-connector-java>5.1.47</mysql-connector-java>
     </properties>
 
     <dependencies>
@@ -37,6 +38,17 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+        <!-- spring-jdbc -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector-java}</version>
         </dependency>
         <!-- redis 客户端之 jedis -->
         <dependency>
