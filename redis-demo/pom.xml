@@ -20,6 +20,9 @@
         <lettuce.version>5.3.5.RELEASE</lettuce.version>
         <servlet-api.version>3.0.1</servlet-api.version>
         <mysql-connector-java>5.1.47</mysql-connector-java>
+        <!-- log4j日志文件管理包版本 -->
+        <slf4j.version>1.6.6</slf4j.version>
+        <log4j.version>1.2.12</log4j.version>
     </properties>
 
     <dependencies>
@@ -43,6 +46,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- spring-tx -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
         <dependency>
@@ -87,6 +96,23 @@
             <version>2.1</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- 日志文件管理包 -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <!-- log end -->
 
     </dependencies>
 
