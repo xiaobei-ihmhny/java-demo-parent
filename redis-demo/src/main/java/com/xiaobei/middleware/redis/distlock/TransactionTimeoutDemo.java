@@ -6,6 +6,8 @@ import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +36,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class TransactionTimeoutDemo {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionTimeoutDemo.class);
 
     /**
      * 配置 {@link JdbcTemplate}、{@link DataSource} 和 {@link PlatformTransactionManager}
@@ -129,18 +133,25 @@ public class TransactionTimeoutDemo {
         private JdbcTemplate jdbcTemplate;
 
         /**
-         *
+         * 测试的时候需要在进入方法：if(lock.tryLock(30, TimeUnit.SECONDS)) 之前执行如下命令：
+         * <pre class="code">
+         *     hset xiaobei-ihmhny aaaa 1;
+         *     expire xiaobei-ihmhny 15
+         *     </pre>
          * <p>相关解释：</p>
          * 事务的超时时间是指
          * Spring事务超时 = 事务开始时到最后一个Statement创建时时间 + 最后一个Statement的执行时超时时间（即其queryTimeout）。
          */
-        @Transactional(rollbackFor = Exception.class, timeout = 1)
+        @Transactional(rollbackFor = Exception.class, timeout = 3)
         public void processAutoTransactionManager() {
             RedissonClient redissonClient = Redisson.create(redissonConfig);
             RLock lock = redissonClient.getLock("xiaobei-ihmhny");
             try {
-                while(lock.tryLock(20, 10, TimeUnit.SECONDS)) {
-                    System.out.println("获取锁成功");
+                // 只有当不设置锁的过期时间时，“看门狗”才会被激活
+                long startTime = System.currentTimeMillis();
+                System.out.println("开始尝试获取锁，开始时间："+ startTime);
+                if(lock.tryLock(30, TimeUnit.SECONDS)) {
+                    System.out.println("获取锁成功，用时："+ (System.currentTimeMillis() - startTime));
                     // 执行相关sql操作
                     int updateCount = jdbcTemplate.update("UPDATE `goods` SET goods_title = 'iphone16 plus' WHERE id = 1");
                     System.out.println(updateCount);
@@ -148,13 +159,20 @@ public class TransactionTimeoutDemo {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                lock.unlock();
+                if(lock.isHeldByCurrentThread())
+                    lock.unlock();
                 redissonClient.shutdown();
             }
         }
 
         /**
-         * 会进入两次 commit
+         * 测试手动提交事务
+         *
+         * 测试的时候需要在进入方法：if(lock.tryLock(30, TimeUnit.SECONDS)) 之前执行如下命令：
+         * <pre class="code">
+         *     hset xiaobei-ihmhny aaaa 1;
+         *     expire xiaobei-ihmhny 15
+         *     </pre>
          */
         public void processManualTransactionManager() {
             // 手动开启事务
@@ -162,8 +180,9 @@ public class TransactionTimeoutDemo {
             RedissonClient redissonClient = Redisson.create(redissonConfig);
             RLock lock = redissonClient.getLock("xiaobei-ihmhny");
             try {
-                while(lock.tryLock(20, 10, TimeUnit.SECONDS)) {
-                    System.out.println("获取锁成功");
+                // 只有当不设置锁的过期时间时，“看门狗”才会被激活
+                if(lock.tryLock(30, TimeUnit.SECONDS)) {
+                    LOGGER.info("获取锁成功");
                     // 执行相关sql操作
                     int updateCount = jdbcTemplate.update("UPDATE `goods` SET goods_title = 'iphone16 plus' WHERE id = 1");
                     System.out.println(updateCount);
@@ -175,6 +194,7 @@ public class TransactionTimeoutDemo {
                 // 手动回滚事务
                 dataSourceTransactionManager.rollback(transactionStatus);
             } finally {
+                LOGGER.info("准备释放锁，关闭 redisson 客户端");
                 lock.unlock();
                 redissonClient.shutdown();
             }
