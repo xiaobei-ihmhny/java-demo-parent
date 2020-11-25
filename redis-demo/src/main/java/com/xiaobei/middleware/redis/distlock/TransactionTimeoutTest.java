@@ -1,6 +1,5 @@
 package com.xiaobei.middleware.redis.distlock;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
@@ -9,17 +8,13 @@ import org.redisson.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,18 +28,30 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
  * @date 2020/11/24 7:02
+ * <p>建表语句</p>
+ * CREATE DATABASE IF NOT EXISTS `miaosha` DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+ * CREATE TABLE `goods` (
+ *    `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+ *    `goods_title` varchar(255) DEFAULT NULL COMMENT '商品名称',
+ *    PRIMARY KEY (`id`)
+ *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
  */
 @Component
-public class TransactionTimeoutDemo {
+public class TransactionTimeoutTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionTimeoutDemo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionTimeoutTest.class);
 
     /**
      * 配置 {@link JdbcTemplate}、{@link DataSource} 和 {@link PlatformTransactionManager}
+     *
+     * {@link EnableTransactionManagement @EnableTransactionManagement} 开启注解事务支持
+     * {@link Configuration @Configuration} 指定当前类为配置类
+     * {@link PropertySource @PropertySource} 指定属性配置文件位置
+     * {@link ComponentScan @ComponentScan} 指定包扫描路径
      */
     @Configuration
     @PropertySource(value = {"classpath:META-INF/jdbc.properties", "classpath:META-INF/redis.properties"})
-    @EnableTransactionManagement// 开启注解事务支持
+    @EnableTransactionManagement
     @ComponentScan(basePackages = "com.xiaobei.middleware.redis.distlock")
     static class JdbcTemplateConfig {
 
@@ -83,17 +90,6 @@ public class TransactionTimeoutDemo {
         }
     }
 
-    public static void main(String[] args) {
-        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
-        applicationContext.register(JdbcTemplateConfig.class);
-        applicationContext.refresh();
-        // 获取 JdbcTemplate
-        JdbcTemplate jdbcTemplate = applicationContext.getBean(JdbcTemplate.class);
-        List<Map<String, Object>> resultList = jdbcTemplate.queryForList("SELECT * FROM goods");
-        System.out.println(resultList);
-        applicationContext.close();
-    }
-
     public AnnotationConfigApplicationContext startAndGetApplicationContext() {
         AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
         applicationContext.register(JdbcTemplateConfig.class);
@@ -102,7 +98,7 @@ public class TransactionTimeoutDemo {
     }
 
     /**
-     *
+     * 测试自动事务控制
      */
     @Test
     public void testAutoTransaction() {
@@ -112,6 +108,9 @@ public class TransactionTimeoutDemo {
         applicationContext.close();
     }
 
+    /**
+     * 测试手动事务控制
+     */
     @Test
     public void testManualTransaction() {
         AnnotationConfigApplicationContext applicationContext = startAndGetApplicationContext();
@@ -120,17 +119,44 @@ public class TransactionTimeoutDemo {
         applicationContext.close();
     }
 
+    /**
+     * 测试自动事务和手动事务
+     */
     @Component
-    class TransactionProcess {
+    static class TransactionProcess {
 
-        @Autowired
+        /**
+         * redis配置信息
+         */
         private Config redissonConfig;
 
-        @Autowired
+        /**
+         * 事务管理器
+         */
         private DataSourceTransactionManager dataSourceTransactionManager;
 
-        @Autowired
+        /**
+         * jdbcTemplate
+         */
         private JdbcTemplate jdbcTemplate;
+
+        @Autowired
+        public TransactionProcess setRedissonConfig(Config redissonConfig) {
+            this.redissonConfig = redissonConfig;
+            return this;
+        }
+
+        @Autowired
+        public TransactionProcess setDataSourceTransactionManager(DataSourceTransactionManager dataSourceTransactionManager) {
+            this.dataSourceTransactionManager = dataSourceTransactionManager;
+            return this;
+        }
+
+        @Autowired
+        public TransactionProcess setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+            this.jdbcTemplate = jdbcTemplate;
+            return this;
+        }
 
         /**
          * 测试的时候需要在进入方法：if(lock.tryLock(30, TimeUnit.SECONDS)) 之前执行如下命令：
