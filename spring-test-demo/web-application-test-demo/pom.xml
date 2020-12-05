@@ -35,6 +35,16 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <!-- thymeleaf相关依赖 start -->
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring5</artifactId>
+        </dependency>
+        <!-- thymeleaf相关依赖 end -->
         <!-- Servlet 4.0 API -->
         <dependency>
             <groupId>javax.servlet</groupId>

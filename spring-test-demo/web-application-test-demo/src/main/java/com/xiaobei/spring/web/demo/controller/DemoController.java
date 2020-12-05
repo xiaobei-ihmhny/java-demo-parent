@@ -1,6 +1,7 @@
 package com.xiaobei.spring.web.demo.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -15,5 +16,12 @@ public class DemoController {
     @RequestMapping("/")
     public String helloWorld() {
         return "Hello, World";
+    }
+
+
+    @RequestMapping("/index")
+    public String index(Model model) {
+        model.addAttribute("message", "xiaobei");
+        return "index";
     }
 }

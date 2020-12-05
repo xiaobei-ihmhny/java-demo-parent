@@ -19,6 +19,8 @@
         <java.version>1.8</java.version>
         <spring-boot-dependencies.version>2.4.0</spring-boot-dependencies.version>
         <spring-framework.version>5.3.1</spring-framework.version>
+        <inject.version>1</inject.version>
+        <thymeleaf-spring5.version>3.0.11.RELEASE</thymeleaf-spring5.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <jedis.version>3.3.0</jedis.version>
@@ -50,6 +52,12 @@
                 <version>${spring-framework.version}</version>
                 <type>pom</type>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${inject.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -57,6 +65,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- thymeleaf相关依赖 start -->
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf-spring5</artifactId>
+                <version>${thymeleaf-spring5.version}</version>
+            </dependency>
+            <!-- thymeleaf相关依赖 end -->
             <!-- Servlet 4.0 API -->
             <dependency>
                 <groupId>javax.servlet</groupId>
