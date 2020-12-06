@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="locations" value="classpath:application.properties"/>
+        <property name="fileEncoding" value="UTF-8"/>
+    </bean>
+
+    <beans profile="default">
+        <!--<jdbc:embedded-database id="dataSource">
+            <jdbc:script location="classpath:META-INF/schema.sql" />
+            <jdbc:script location="classpath:META-INF/test-data.sql" />
+        </jdbc:embedded-database>-->
+        <bean id="myDataSource" class="com.xiaobei.general.spring.demo.domain.MyDataSource">
+            <property name="url" value="${jdbc.url}"/>
+            <property name="username" value="${jdbc.username}"/>
+            <property name="password" value="${jdbc.password}"/>
+        </bean>
+    </beans>
+
+    <beans profile="dev1">
+        <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+            <property name="url" value="${dev1.jdbc.url}"/>
+            <property name="username" value="${dev1.jdbc.username}"/>
+            <property name="password" value="${dev1.jdbc.password}"/>
+        </bean>
+        <bean id="myDataSource" class="com.xiaobei.general.spring.demo.domain.MyDataSource">
+            <property name="url" value="${dev1.jdbc.url}"/>
+            <property name="username" value="${dev1.jdbc.username}"/>
+            <property name="password" value="${dev1.jdbc.password}"/>
+        </bean>
+    </beans>
+
+    <beans profile="test1">
+        <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+            <property name="url" value="${test1.jdbc.url}"/>
+            <property name="username" value="${test1.jdbc.username}"/>
+            <property name="password" value="${test1.jdbc.password}"/>
+        </bean>
+        <bean id="myDataSource" class="com.xiaobei.general.spring.demo.domain.MyDataSource">
+            <property name="url" value="${test1.jdbc.url}"/>
+            <property name="username" value="${test1.jdbc.username}"/>
+            <property name="password" value="${test1.jdbc.password}"/>
+        </bean>
+    </beans>
+
+
+</beans>
