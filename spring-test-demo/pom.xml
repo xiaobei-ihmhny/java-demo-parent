@@ -19,10 +19,12 @@
         <java.version>1.8</java.version>
         <spring-boot-dependencies.version>2.4.0</spring-boot-dependencies.version>
         <spring-framework.version>5.3.1</spring-framework.version>
+        <junit-bom.version>5.7.0</junit-bom.version>
+        <junit.version>4.12</junit.version>
         <inject.version>1</inject.version>
         <thymeleaf-spring5.version>3.0.11.RELEASE</thymeleaf-spring5.version>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
         <jedis.version>3.3.0</jedis.version>
         <redisson.version>3.13.6</redisson.version>
         <redisson.version>3.5.4</redisson.version>
@@ -33,7 +35,6 @@
         <!-- log4j日志文件管理包版本 -->
         <slf4j.version>1.6.6</slf4j.version>
         <log4j.version>1.2.12</log4j.version>
-        <junit.version>4.12</junit.version>
         <!-- Jun 03, 2018 -->
         <maven-war-plugin.version>3.2.2</maven-war-plugin.version>
     </properties>
@@ -52,18 +53,26 @@
                 <version>${spring-framework.version}</version>
                 <type>pom</type>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
-            <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>${inject.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- junit5 版本控制 -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${inject.version}</version>
             </dependency>
             <!-- thymeleaf相关依赖 start -->
             <dependency>
