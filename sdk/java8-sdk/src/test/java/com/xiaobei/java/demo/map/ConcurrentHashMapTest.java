@@ -2,9 +2,8 @@ package com.xiaobei.java.demo.map;
 
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -24,5 +23,22 @@ public class ConcurrentHashMapTest {
         int i = Integer.numberOfLeadingZeros(n);
         System.out.println(i);
         return i | (1 << (16 - 1));
+    }
+
+    @Test
+    public void computeIfAbsent() {
+        Map<String, Set<String>> map = new ConcurrentHashMap<>();
+        Set<String> set = map.computeIfAbsent("1", k -> new LinkedHashSet<>(8));
+        boolean result = set.add("2");
+        Set<String> set2 = map.computeIfAbsent("1", k -> new LinkedHashSet<>(8));
+        boolean result2 = set.add("2");
+        // computeIfAbsent 相当于下面的功能
+        Set<String> tempSet = map.get("1");
+        if(tempSet == null) {
+            tempSet = new LinkedHashSet<>(8);
+        }
+        tempSet.add("2");
+        map.put("1", tempSet);
+        System.out.println(map);
     }
 }
