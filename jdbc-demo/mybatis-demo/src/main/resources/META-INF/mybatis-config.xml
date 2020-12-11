@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="META-INF/jdbc.properties"/>
+    <!--
+        所有可影响 mybatis 行为的配置，
+        所有内容参见：https://mybatis.org/mybatis-3/configuration.html#settings
+        配置上方的注释分别为：功能描述 / 合法取值范围 / 默认值
+    -->
+    <settings>
+        <!--
+            全局缓存开关
+            / true|false
+            / true -->
+        <setting name="cacheEnabled" value="false"/>
+        <!--
+            全局延迟加载开头，开启后所有的关联查询（association|collection），
+            对于有特殊要求的查询，可以使用属性 fetchType 来覆盖全局配置。
+             / true|false
+             / false
+         -->
+        <setting name="lazyLoadingEnabled" value="false"/>
+        <!--
+            如果开启，任何方法调用都将加载对象的所有惰性属性。否则，按需加载每个属性。
+            / true|false
+            / (3.4.1及之前版本为 true)false
+        -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!--
+            指定哪些 Object 的方法触发延迟加载，
+            / 方法名称列表，以逗号分隔
+            / equals,clone,hashCode,toString
+         -->
+        <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
+        <!--
+            是否允许单一语句返回多个结果集（需要驱动支持），
+            即 Mapper 配置中一个单一的 SQL 配置是否能返回多个结果集
+            / true|false
+            / true
+         -->
+        <setting name="multipleResultSetsEnabled" value="true"/>
+        <!--
+            是否开启使用列标签代替列名称，不同驱动可能有不现的行为，
+            需要查看相关驱动文档或进行测试以确定具体行为。
+            / true|false
+            / true
+         -->
+        <setting name="useColumnLabel" value="true"/>
+        <!--
+            是否支持 JDBC 自动生成主键，需要驱动支持，
+            设置为 true 时表示强制生成主键
+            / true|false
+            / false
+         -->
+        <setting name="useGeneratedKeys" value="false"/>
+        <!--
+            指定 MyBatis 是否支持自动将列映射到字段/属性
+            / NONE: 关闭自动映射；
+              PARTIAL：只会自动映射没有定义结果集的结果；
+              FULL：自动映射任何复杂的结果集（包括嵌套事其他形式）
+            / PARTIAL
+        -->
+        <setting name="autoMappingBehavior" value="PARTIAL"/>
+        <!--
+            设置当自动映射时发现未知列的行为
+            / NONE：什么都不做
+              WARNING：输出警告日志（The log level of
+                'org.apache.ibatis.session.AutoMappingUnknownColumnBehavior' must be set to WARN）
+              FAILING：映射失败，并抛出异常-SqlSessionException
+            / NONE
+        -->
+        <setting name="autoMappingUnknownColumnBehavior" value="NONE"/>
+        <!--
+            配置默认的执行器。
+            / SIMPLE：普通执行器；
+              REUSE：执行器会重用处理语句（prepared statements）
+              BATCH：执行器将重用语句并执行批量更新
+            / SIMPLE
+         -->
+        <setting name="defaultExecutorType" value="SIMPLE"/>
+        <!--
+            设置驱动等待数据库响应的最长时间，以秒为单位
+            / 正整数
+            / Not Set (null)
+        <setting name="defaultStatementTimeout" value=""/>
+        -->
+        <!--
+            设置驱动程序允许的最大结果集数量，防止结果集过大导致内存溢出，
+            可以通过查询设置覆盖全局配置
+            / 正整数
+            / Not Set（null）
+        <setting name="defaultFetchSize" value=""/>
+         -->
+        <!--
+            根据语句设置省略滚动策略时指定（版本高于 3.5.2）。
+            / FORWARD_ONLY | SCROLL_SENSITIVE | SCROLL_INSENSITIVE | DEFAULT（与'Not Set'相同的行为）
+            / Not Set(null)
+        <setting name="defaultResultSetType" value=""/>
+         -->
+        <!--
+            是否允许在嵌套语句上使用 RowBounds，如果允许，设置为 false
+            / true|false
+            / false
+        -->
+        <setting name="safeRowBoundsEnabled" value="false"/>
+        <!--
+            是否允许嵌套语句使用在 ResultHandler 上，如果允许，设置为 false
+            / true|false
+            / true
+        -->
+        <setting name="safeResultHandlerEnabled" value="true"/>
+        <!--
+            启用从经典数据库列名称 A_COLUMN 到驼峰式经典 Java 属性名称 aColumn 的自动映射。
+            / true|false
+            / false
+         -->
+        <setting name="mapUnderscoreToCamelCase" value="false"/>
+        <!--
+            MyBatis使用本地缓存来防止循环引用并加快重复的嵌套查询。
+            默认情况下（SESSION）在会话期间执行的所有查询都将被缓存。
+            如果localCacheScope = STATEMENT本地会话仅用于语句执行，
+            则对同一SqlSession的两个不同调用之间不会共享任何数据。
+            / SESSION | STATEMENT
+            / SESSION
+        -->
+        <setting name="localCacheScope" value="SESSION"/>
+        <!--
+            当没有为参数提供特定的JDBC类型时，为空值指定JDBC类型。
+            一些驱动程序需要指定列JDBC类型，
+            而其他驱动程序则可以使用NULL，VARCHAR或OTHER等通用值。
+            / JdbcType枚举。 最常见的是：NULL，VARCHAR和OTHER
+            / OTHER
+        -->
+        <setting name="jdbcTypeForNull" value="OTHER"/>
+        <!--
+            指定默认情况下用于动态SQL生成的语言。
+            / 类型别名或完全限定的类名。
+            / org.apache.ibatis.scripting.xmltags.XMLLanguageDriver
+        -->
+        <setting name="defaultScriptingLanguage" value="org.apache.ibatis.scripting.xmltags.XMLLanguageDriver"/>
+        <!--
+            指定默认用于Enum的TypeHandler（3.4.5以上版本支持）
+            / 类型别名或完全限定的类名
+            / org.apache.ibatis.type.EnumTypeHandler
+        -->
+        <setting name="defaultEnumTypeHandler" value="org.apache.ibatis.type.EnumTypeHandler"/>
+        <!--
+            指定在检索到的值为null时是否将调用setter或map的put方法。
+            当您依赖Map.keySet()或 null 初始化时，此功能很有用。
+            注意诸如（int，boolean等）的原生类型不会设置为 null。
+            / true|false
+            / false
+        -->
+        <setting name="callSettersOnNulls" value="false"/>
+        <!--
+            默认情况下，若所有的列返回都为 null 时，MyBatis也会返回 null，
+            当设置为 true 时，MyBatis 将会返回一个空的实例对象。
+            这同样适用于嵌套结果（例如：collection and association）。
+            版本要求3.4.5或以上
+            / true|false
+            false
+         -->
+        <setting name="returnInstanceForEmptyRow" value="false"/>
+        <!--
+            指定 MyBatis 所有日志中的前缀字符
+            / 任意字符
+            / Not set
+         -->
+        <setting name="logPrefix" value=""/>
+        <!--
+            指定 MyBatis 使用日志的具体实现，未指定时将自动查找
+            / SLF4J | LOG4J | LOG4J2 | JDK_LOGGING | COMMONS_LOGGING | STDOUT_LOGGING | NO_LOGGING
+            / Not set
+        <setting name="logImpl" value=""/>
+        -->
+        <!--
+            指定MyBatis将用于创建支持延迟加载的对象的代理工具。
+            / CGLIB | JAVASSIST
+            / JAVASSIST
+        -->
+        <setting name="proxyFactory" value="JAVASSIST"/>
+        <!--
+            指定 vfs 的实现
+            / 自定义VFS实现的完全限定的类名，以逗号分隔。
+            / Not set
+        <setting name="vfsImpl" value=""/>
+        -->
+        <!--
+            使用方法签名，允许使用方法签名中的名称作为语句参数名称。要使用该特性，
+            工程必须采用 Java8 编译，并且加上parameters选项（从 MyBatis3.4.1 版本开始）
+            / true|false
+            / true
+        -->
+        <setting name="useActualParamName" value="true"/>
+        <!--
+            指定提供 {@code Configuration} 实例的类。
+            获取到的 {@code Configuration} 实例用于加载反序列化的懒加载参数。
+            该类中必须有一个方法签名为：{@code static Configuration getConfiguration()}
+            从 MyBatis 3.5.5 开始
+            / 类型别名或完全限定的类名
+            / Not set
+        <setting name="configurationFactory" value=""/>
+        -->
+        <!--
+            从SQL中删除多余的空格字符。 请注意，这也会影响SQL中的文字字符串。（从3.5.5版开始）
+            / true|false
+            / false
+        -->
+        <setting name="shrinkWhitespacesInSql" value="false"/>
+        <!--
+            指定一个保存提供程序方法的SQL提供程序类（自3.5.6开始）。
+             当省略了这些属性时，此类适用于sql provider注释（例如@SelectProvider）上的type（或value）属性。
+            / 类型别名或完全限定的类名
+            / Not set
+        <setting name="defaultSqlProviderType" value=""/>
+        -->
+    </settings>
+    <typeAliases>
+        <typeAlias type="com.xiaobei.mybatis.demo.domain.User" alias="User"/>
+    </typeAliases>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+<!--                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>-->
+<!--                <property name="url" value="jdbc:mysql://localhost:3306/db1?serverTimezone=GMT"/>-->
+<!--                <property name="username" value="root"/>-->
+<!--                <property name="password" value="root"/>-->
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+<!--        <mapper class="com.xiaobei.mybatis.demo.mapper.UserMapper"/>-->
+        <mapper resource="META-INF/mapper/UserMapper.xml"/>
+    </mappers>
+</configuration>
