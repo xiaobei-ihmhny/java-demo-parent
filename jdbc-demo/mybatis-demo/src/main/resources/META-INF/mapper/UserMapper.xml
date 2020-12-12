@@ -4,11 +4,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xiaobei.mybatis.demo.mapper.UserMapper">
 
+    <!--
+        该配置的效果如下：
+        0. 使用的缓存实现为：org.apache.ibatis.cache.impl.PerpetualCache
+        1. 映射语句文件中的所有 select 语句的结果将会被缓存。
+        2. 映射语句文件中的所有 insert、update 和 delete 语句会刷新缓存。
+        3. eviction="LRU" 缓存会使用最近最少使用算法（LRU, Least Recently Used）算法来清除不需要的缓存。
+        4. flushInterval未设置 缓存不会定时进行刷新（也就是说，没有刷新间隔）。
+        5. size="1024" 缓存会保存列表或对象（无论查询方法返回哪种）的 1024 个引用。
+        6. readOnly="false" 缓存会被视为读/写缓存，这意味着获取到的对象并不是共享的，可以安全地被调用者修改，
+          而不干扰其他调用者或线程所做的潜在修改。
+        7. blocking=""？这个属性如何配置？
+    -->
+    <cache/>
     <select id="selectById" resultType="User">
         select * from `user` where id = #{id}
     </select>
 
-    <update id="updateById" parameterType="User" flushCache="false">
+    <update id="updateById" parameterType="User">
         UPDATE `user`
         SET `user`.username = #{username}, `user`.age = #{age}, birth_place = #{birthPlace}
         WHERE `user`.id = #{id}

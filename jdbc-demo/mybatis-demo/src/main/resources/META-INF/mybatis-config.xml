@@ -14,7 +14,7 @@
             全局缓存开关
             / true|false
             / true -->
-        <setting name="cacheEnabled" value="false"/>
+        <setting name="cacheEnabled" value="true"/>
         <!--
             全局延迟加载开头，开启后所有的关联查询（association|collection），
             对于有特殊要求的查询，可以使用属性 fetchType 来覆盖全局配置。
