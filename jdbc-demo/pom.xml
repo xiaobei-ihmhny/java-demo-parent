@@ -27,6 +27,7 @@
         <hikaricp.version>3.4.5</hikaricp.version>
         <hibernate.version>5.4.25.Final</hibernate.version>
         <mybatis.version>3.5.6</mybatis.version>
+        <pagehelper.version>5.2.0</pagehelper.version>
     </properties>
 
     <dependencyManagement>
@@ -116,6 +117,11 @@
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

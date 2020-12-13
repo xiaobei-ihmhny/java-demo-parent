@@ -4,10 +4,7 @@ import com.xiaobei.mybatis.demo.domain.User;
 import com.xiaobei.mybatis.demo.mapper.UserMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.junit.Test;
@@ -24,6 +21,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
@@ -77,10 +76,14 @@ public class MybatisBasicTest {
     public void xmlByTypeSafe() throws IOException {
         String resource = "META-INF/mybatis-config.xml";
         InputStream inputStream = Resources.getResourceAsStream(resource);
+        // 1. 配置解析过程
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         // type safe way
+        // 2. 会话创建过程
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            // 3. 获取取 Mapper 对象
             UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+            // 4. 执行 SQL 过程
             User user = mapper.selectById(1L);
             System.out.println("使用接口调用：" + user);
         }
@@ -97,4 +100,27 @@ public class MybatisBasicTest {
         SqlSession sqlSession = sqlSessionFactory.openSession();
     }
 
+
+    @Test
+    public void testLambda() {
+        Integer Yes=100;
+        Integer No=null;
+        System.out.println("-----------non-null----------");
+        System.out.println("input:"+Yes+"\toutput:"+ Optional.ofNullable(Yes).orElse(invokeMethod("orElse")));
+        System.out.println("input:"+Yes+"\toutput:"+Optional.ofNullable(Yes).orElseGet(() ->invokeMethod("orElseGet")));
+        System.out.println("-----------null--------------");
+        System.out.println("input:"+No+"\toutput:"+Optional.ofNullable(No).orElse(invokeMethod("orElse")));
+        System.out.println("input:"+No+"\toutput:"+Optional.ofNullable(No).orElseGet(() ->invokeMethod("orElseGet")));
+
+    }
+
+    /**
+     * invokeMethod
+     * @param type
+     * @return
+     */
+    public static Integer invokeMethod(String type){
+        System.out.println("invokeType:"+type);
+        return 9527;
+    }
 }
