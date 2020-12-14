@@ -10,6 +10,7 @@ import java.util.Map;
  */
 public class TTExecutor {
 
+    @SuppressWarnings("unchecked")
     public <T> T query(String sql, Object parameter) {
         // TODO 直接使用JDBC的查询方式
         String url = "jdbc:mysql://127.0.0.1:3306/db1?serverTimezone=GMT";
