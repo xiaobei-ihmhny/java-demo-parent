@@ -12,6 +12,7 @@
         <module>directly-use-jdbc-demo</module>
         <module>hibernate-demo</module>
         <module>mybatis-demo</module>
+        <module>TTBatis</module>
     </modules>
 
     <properties>
