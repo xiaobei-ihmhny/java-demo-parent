@@ -2,6 +2,8 @@ package com.xiaobei.mybatis.demo.spring;
 
 import com.xiaobei.mybatis.demo.domain.User;
 import com.xiaobei.mybatis.demo.mapper.UserMapper;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -44,6 +46,26 @@ public class MyBatisSpringDemo {
         // 获取相关的 Bean
         UserMapper userMapper = applicationContext.getBean(UserMapper.class);
         User user = userMapper.selectById(1L);
+        System.out.println(user);
+        applicationContext.close();
+    }
+
+    /**
+     * 不能直接注入 {@link SqlSession} 的实现
+     * {@link org.apache.ibatis.session.defaults.DefaultSqlSession}
+     * 因为其不是线程安全的
+     */
+    @Test
+    public void canUserDefaultSqlSession() {
+        String location = "META-INF/application.xml";
+        ClassPathXmlApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext(location);
+        applicationContext.refresh();
+        // 获取相关的 Bean
+        SqlSessionFactory sqlSessionFactory = applicationContext.getBean(SqlSessionFactory.class);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        User user = mapper.selectById(1L);
         System.out.println(user);
         applicationContext.close();
     }
