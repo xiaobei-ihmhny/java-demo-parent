@@ -1,5 +1,6 @@
 package com.xiaobei.mybatis.demo.domain;
 
+import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
@@ -8,6 +9,7 @@ import java.io.Serializable;
  */
 public class User implements Serializable {
 
+    @Id
     private Integer id;
 
     private String username;
