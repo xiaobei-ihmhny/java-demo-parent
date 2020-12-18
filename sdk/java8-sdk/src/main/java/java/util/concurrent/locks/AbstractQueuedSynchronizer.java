@@ -624,6 +624,8 @@ public abstract class AbstractQueuedSynchronizer
      * acquire methods.  Also nulls out unused fields for sake of GC
      * and to suppress unnecessary signals and traversals.
      *
+     * 将指定结点设置为头结点。仅通过acquire方法调用。
+     * 为了GC并避免不必要的唤醒和遍历，清空其他字段
      * @param node the node
      */
     private void setHead(Node node) {
@@ -680,15 +682,23 @@ public abstract class AbstractQueuedSynchronizer
          * while we are doing this. Also, unlike other uses of
          * unparkSuccessor, we need to know if CAS to reset status
          * fails, if so rechecking.
+         *
+         * 即使有正在进行acquire/release操作，也要确保释放操作的传播。
+         * 如果需要唤醒，将以尝试取消head结点的常规方式来进行。但
+         * 如果不需要唤醒，应该设置状态为PROPAGATE以确保后续结点
+         * 可以正常唤醒。此外，当我们执行操作时，必须循环以防
+         * 新结点的加入。此外，和unparkSuccessor的其他用法不同的是，
+         * 我们需要知道CAS的重置状态操作是否失败，如果失败则需要重新检查。
          */
         for (;;) {
             Node h = head;
             if (h != null && h != tail) {
                 int ws = h.waitStatus;
                 if (ws == Node.SIGNAL) {
+                    // 将头结点的状态置为0，表示将要唤醒后继结点。
                     if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))
                         continue;            // loop to recheck cases
-                    unparkSuccessor(h);
+                    unparkSuccessor(h);// 唤醒后继结点
                 }
                 else if (ws == 0 &&
                         !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))
@@ -704,6 +714,8 @@ public abstract class AbstractQueuedSynchronizer
      * in shared mode, if so propagating if either propagate > 0 or
      * PROPAGATE status was set.
      *
+     * 设置队列头，并检查后继结点是否在共享模式下阻塞，如果在阻塞状态下
+     * 且propagate>0或者状态值为PROPAGATE则进行传播。
      * @param node the node
      * @param propagate the return value from a tryAcquireShared
      */
@@ -721,11 +733,19 @@ public abstract class AbstractQueuedSynchronizer
          *   The next node is waiting in shared mode,
          *     or we don't know, because it appears null
          *
+         * 尝试唤醒后续结点，如果：
+         * 调用者具有传播属性（即：h.waitStatus==Node.PROPAGATE）
+         * 或者被上一个操作记录（在setHead之前或之后作为h.waitStatus）
+         * （注意：这里只检查waitStatus的符号
+         * 因为PROPAGATE状态有可能被转换为SIGNAL）
+         * 下一个结点在共享模式下阻塞，或者我们不确定，因为它是null
+         *
          * The conservatism in both of these checks may cause
          * unnecessary wake-ups, but only when there are multiple
          * racing acquires/releases, so most need signals now or soon
          * anyway.
          */
+        // 判断是否需要唤醒后继结点
         if (propagate > 0 || h == null || h.waitStatus < 0 ||
                 (h = head) == null || h.waitStatus < 0) {
             Node s = node.next;
@@ -789,23 +809,31 @@ public abstract class AbstractQueuedSynchronizer
      * Checks and updates status for a node that failed to acquire.
      * Returns true if thread should block. This is the main signal
      * control in all acquire loops.  Requires that pred == node.prev.
-     *
+     * 检查并更新获取失败的节点的状态。返回true表明线程应该被阻塞。
+     * 这是所有唤醒操作中的主要手段。要求节点pred必须是node节点的前置节点。
      * @param pred node's predecessor holding status
      * @param node the node
      * @return {@code true} if thread should block
      */
     private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
-        int ws = pred.waitStatus;
+        int ws = pred.waitStatus;// 前驱结点的状态
         if (ws == Node.SIGNAL)
             /*
              * This node has already set status asking a release
              * to signal it, so it can safely park.
+             *
+             * 该节点已经设置的状态允许通过调用release唤醒自己，
+             * 所以可以安全的调用park方法。
+             *
              */
             return true;
         if (ws > 0) {
             /*
              * Predecessor was cancelled. Skip over predecessors and
              * indicate retry.
+             *
+             * node节点的前置节点的状态为取消。此时需要找到距离当前节点
+             * 最近的且未被取消的前置节点，并将找到节点的后置节点设置为node。
              */
             do {
                 node.prev = pred = pred.prev;
@@ -816,6 +844,9 @@ public abstract class AbstractQueuedSynchronizer
              * waitStatus must be 0 or PROPAGATE.  Indicate that we
              * need a signal, but don't park yet.  Caller will need to
              * retry to make sure it cannot acquire before parking.
+             *
+             * waitStatus的值必须为0或者PROPAGATE。表明我们需要被唤醒，
+             * 但还没有阻塞。调用者需要重试以确保在线程阻塞前无法获取。
              */
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
         }
@@ -831,7 +862,7 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * Convenience method to park and then check if interrupted
-     *
+     * 便捷的阻塞方法，之后检查是否中断。
      * @return {@code true} if interrupted
      */
     private final boolean parkAndCheckInterrupt() {
@@ -977,18 +1008,20 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * Acquires in shared interruptible mode.
+     * 共享可中断模式下的获取
      * @param arg the acquire argument
      */
     private void doAcquireSharedInterruptibly(int arg)
             throws InterruptedException {
-        final Node node = addWaiter(Node.SHARED);
+        // 参见图：架构知识库/源码分析/相关图片/AQS共享模式下的排队示意图.png
+        final Node node = addWaiter(Node.SHARED);// 包装成共享节点，插入等待队列
         boolean failed = true;
         try {
-            for (;;) {
+            for (;;) {// 自旋 阻塞线程或尝试获取锁
                 final Node p = node.predecessor();
                 if (p == head) {
-                    int r = tryAcquireShared(arg);
-                    if (r >= 0) {
+                    int r = tryAcquireShared(arg);// 尝试获取锁
+                    if (r >= 0) {// 大于等于0表示获取成功
                         setHeadAndPropagate(node, r);
                         p.next = null; // help GC
                         failed = false;
@@ -996,7 +1029,7 @@ public abstract class AbstractQueuedSynchronizer
                     }
                 }
                 if (shouldParkAfterFailedAcquire(p, node) &&
-                        parkAndCheckInterrupt())
+                        parkAndCheckInterrupt())// 检查是否阻塞当前节点
                     throw new InterruptedException();
             }
         } finally {
@@ -1109,10 +1142,21 @@ public abstract class AbstractQueuedSynchronizer
      * the state of the object permits it to be acquired in the shared
      * mode, and if so to acquire it.
      *
+     * <p>尝试以共享模式进行获取。此方法此方法应该检查对象的状态，
+     * 以确定是否允许以共享的模式获取对象，如果允许则获取它。
+     *
      * <p>This method is always invoked by the thread performing
      * acquire.  If this method reports failure, the acquire method
      * may queue the thread, if it is not already queued, until it is
      * signalled by a release from some other thread.
+     *
+     * <p>该方法总是由执行 acquire 的方法
+     * 包括：
+     * <li>{@link #acquireShared(int)}
+     * <li>{@link #acquireSharedInterruptibly(int)}
+     * <li>{@link #tryAcquireSharedNanos(int, long)}
+     * <p>的线程调用，如果该方法获取失败且当前线程还没有加入到等待队列（AQS队列），
+     * 则 acquire 方法会将当前线程加入等待队列，直到它被其他线程通过 release 唤醒
      *
      * <p>The default implementation throws {@link
      * UnsupportedOperationException}.
@@ -1121,19 +1165,28 @@ public abstract class AbstractQueuedSynchronizer
      *        passed to an acquire method, or is the value saved on entry
      *        to a condition wait.  The value is otherwise uninterpreted
      *        and can represent anything you like.
+     * <p> arg 是 acquire 参数，该值总是传递给 acquire 方法的那个值，
+     *            或者是在条件等待时保存的值。该值是不间隔的，并且可以表示任何内容。
      * @return a negative value on failure; zero if acquisition in shared
      *         mode succeeded but no subsequent shared-mode acquire can
-     *         succeed; and a positive value if acquisition in shared
+     *         succeed; and a positive value if
+     *         in shared
      *         mode succeeded and subsequent shared-mode acquires might
      *         also succeed, in which case a subsequent waiting thread
      *         must check availability. (Support for three different
      *         return values enables this method to be used in contexts
      *         where acquires only sometimes act exclusively.)  Upon
      *         success, this object has been acquired.
+     * <p> 在失败时返回负值；如果在共享模式下获取成功但其后续共享模式下的节点获取不成功则返回0；
+     * 如果共享模式下获取成功并且之后同享模式下的获取也能成功，则返回正值。
+     * 在这种情况下，后续线程必须检查其可用性。
+     * （对这三种不同返回值的支持，使得该方法有时可用于在独占模式下仅用于获取的行为）
      * @throws IllegalMonitorStateException if acquiring would place this
      *         synchronizer in an illegal state. This exception must be
      *         thrown in a consistent fashion for synchronization to work
      *         correctly.
+     * <p>如果正在进行的获取操作将使同步器处于一种非法状态。必须执行此异常，
+     * 以使同步正确运行。
      * @throws UnsupportedOperationException if shared mode is not supported
      */
     protected int tryAcquireShared(int arg) {
@@ -1143,7 +1196,15 @@ public abstract class AbstractQueuedSynchronizer
     /**
      * Attempts to set the state to reflect a release in shared mode.
      *
+     * 尝试设置状态以响应共享模式下的释放锁操作
+     *
      * <p>This method is always invoked by the thread performing release.
+     *
+     * 该方法将总是被 release 相关的方法
+     * （
+     * <li>{@link #releaseShared(int)}
+     * ）
+     * 调用
      *
      * <p>The default implementation throws
      * {@link UnsupportedOperationException}.
@@ -1152,13 +1213,23 @@ public abstract class AbstractQueuedSynchronizer
      *        passed to a release method, or the current state value upon
      *        entry to a condition wait.  The value is otherwise
      *        uninterpreted and can represent anything you like.
+     *
+     * <p> arg 是 release 的参数，该值始终是传递给 release 方法的值，
+     *            或者是进入条件等待队列时的当前状态值。
+     *            否则该值将无法解释，并且可以代表您喜欢的任何内容。
      * @return {@code true} if this release of shared mode may permit a
      *         waiting acquire (shared or exclusive) to succeed; and
      *         {@code false} otherwise
+     *
+     * <p> 若当前共享模式下的释放锁操作允许等待的线程（共享或独占）获取锁成功，则返回true
+     * 否则返回 false
      * @throws IllegalMonitorStateException if releasing would place this
      *         synchronizer in an illegal state. This exception must be
      *         thrown in a consistent fashion for synchronization to work
      *         correctly.
+     *
+     * <p>如果正在进行的获取操作将使同步器处于一种非法状态。必须执行此异常，
+     * 以使同步正确运行。
      * @throws UnsupportedOperationException if shared mode is not supported
      */
     protected boolean tryReleaseShared(int arg) {
@@ -1340,7 +1411,7 @@ public abstract class AbstractQueuedSynchronizer
      * @return the value returned from {@link #tryReleaseShared}
      */
     public final boolean releaseShared(int arg) {
-        if (tryReleaseShared(arg)) {
+        if (tryReleaseShared(arg)) {// 尝试一次释放锁
             doReleaseShared();
             return true;
         }
