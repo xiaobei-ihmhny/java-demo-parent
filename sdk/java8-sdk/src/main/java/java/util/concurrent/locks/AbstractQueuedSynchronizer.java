@@ -636,7 +636,7 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * Wakes up node's successor, if one exists.
-     *
+     * 唤醒当前结点的后继结点（线程）
      * @param node the node
      */
     private void unparkSuccessor(Node node) {
@@ -647,7 +647,7 @@ public abstract class AbstractQueuedSynchronizer
          */
         int ws = node.waitStatus;
         if (ws < 0)
-            compareAndSetWaitStatus(node, ws, 0);
+            compareAndSetWaitStatus(node, ws, 0);//预置当前结点的状态为0，表示后续结点即将被唤醒
 
         /*
          * Thread to unpark is held in successor, which is normally
@@ -655,14 +655,16 @@ public abstract class AbstractQueuedSynchronizer
          * traverse backwards from tail to find the actual
          * non-cancelled successor.
          */
-        Node s = node.next;
+        Node s = node.next;// 后继结点
+        // 正常情况下，会直接唤醒后继结点
+        // 但是如果后继结点处于1:CANCELLED状态时（说明被取消了），会从队尾开始，向前找到第一个未被CANCELLED的结点。
         if (s == null || s.waitStatus > 0) {
             s = null;
-            for (Node t = tail; t != null && t != node; t = t.prev)
+            for (Node t = tail; t != null && t != node; t = t.prev)// 从tail开始向前查找就是为了考虑并发入队的情况
                 if (t.waitStatus <= 0)
                     s = t;
         }
-        if (s != null)
+        if (s != null)// 唤醒结点
             LockSupport.unpark(s.thread);
     }
 
@@ -692,11 +694,10 @@ public abstract class AbstractQueuedSynchronizer
          */
         for (;;) {
             Node h = head;
-            if (h != null && h != tail) {
+            if (h != null && h != tail) {// 队列不为空
                 int ws = h.waitStatus;
                 if (ws == Node.SIGNAL) {
-                    // 将头结点的状态置为0，表示将要唤醒后继结点。
-                    if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))
+                    if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))// 将头结点的状态置为0，表示将要唤醒后继结点。
                         continue;            // loop to recheck cases
                     unparkSuccessor(h);// 唤醒后继结点
                 }
@@ -811,13 +812,17 @@ public abstract class AbstractQueuedSynchronizer
      * control in all acquire loops.  Requires that pred == node.prev.
      * 检查并更新获取失败的节点的状态。返回true表明线程应该被阻塞。
      * 这是所有唤醒操作中的主要手段。要求节点pred必须是node节点的前置节点。
+     *
+     * 判断是否需要阻塞当前线程
+     * 注意，CLH队列的一个特点就是，将当前结点的状态保存在它的前驱中，前驱状态是【-1：等待唤醒】时，才会阻塞当前线程
+     *
      * @param pred node's predecessor holding status
      * @param node the node
      * @return {@code true} if thread should block
      */
     private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
         int ws = pred.waitStatus;// 前驱结点的状态
-        if (ws == Node.SIGNAL)
+        if (ws == Node.SIGNAL)//后续结点需要被唤醒（这个状态表明当前节点的前驱结点将来会唤醒我，我可以安心的被阻塞了）
             /*
              * This node has already set status asking a release
              * to signal it, so it can safely park.
@@ -827,7 +832,7 @@ public abstract class AbstractQueuedSynchronizer
              *
              */
             return true;
-        if (ws > 0) {
+        if (ws > 0) {// CANCELED：取消（说明前驱结点（线程）因意外被中断/取消，需要将其从等待队列移除）
             /*
              * Predecessor was cancelled. Skip over predecessors and
              * indicate retry.
@@ -847,6 +852,8 @@ public abstract class AbstractQueuedSynchronizer
              *
              * waitStatus的值必须为0或者PROPAGATE。表明我们需要被唤醒，
              * 但还没有阻塞。调用者需要重试以确保在线程阻塞前无法获取。
+             *
+             * 阻塞前先将前驱结点的状态置为SIGNAL
              */
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
         }
