@@ -67,6 +67,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     /**
      * {@inheritDoc}
      *
+     * 返回指定key对应的值；如果Map不存在该key，则返回defaultValue
+     *
      * @implNote This implementation assumes that the ConcurrentMap cannot
      * contain null values and {@code get()} returning null unambiguously means
      * the key is absent. Implementations which support null values
@@ -84,6 +86,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
 
     /**
      * {@inheritDoc}
+     *
+     * 遍历Map的所有Entry，并对其进行指定的action操作
      *
      * @implSpec The default implementation is equivalent to, for this
      * {@code map}:
@@ -118,6 +122,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     }
 
     /**
+     * 如果Map不存在指定的key，则插入<K,V>；否则，直接返回该key对应的值
+     *
      * If the specified key is not already associated
      * with a value, associate it with the given value.
      * This is equivalent to
@@ -152,6 +158,7 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     V putIfAbsent(K key, V value);
 
     /**
+     * 删除与<key,value>完全匹配的Entry，并返回true；否则，返回false
      * Removes the entry for a key only if currently mapped to a given value.
      * This is equivalent to
      *  <pre> {@code
@@ -182,6 +189,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     boolean remove(Object key, Object value);
 
     /**
+     * 如果存在key，且值和oldValue一致，则更新为newValue，并返回true；否则，返回false
+     *
      * Replaces the entry for a key only if currently mapped to a given value.
      * This is equivalent to
      *  <pre> {@code
@@ -213,6 +222,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     boolean replace(K key, V oldValue, V newValue);
 
     /**
+     * 如果存在key，则更新为value，返回旧value；否则，返回null
+     *
      * Replaces the entry for a key only if currently mapped to some value.
      * This is equivalent to
      *  <pre> {@code
@@ -246,6 +257,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     V replace(K key, V value);
 
     /**
+     * 遍历Map的所有Entry，并对其进行指定的function操作
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -288,6 +301,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     }
 
     /**
+     * 如果Map不存在指定的key，则通过mappingFunction计算value并插入
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -328,6 +343,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     }
 
     /**
+     * 如果Map存在指定的key，则通过mappingFunction计算value并替换旧值
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -383,6 +400,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     }
 
     /**
+     * 根据指定的key，查找value；然后根据得到的value和remappingFunction重新计算新值，并替换旧值
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -468,6 +487,8 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
 
 
     /**
+     * 如果key不存在，则插入value；否则，根据key对应的值和remappingFunction计算新值，并替换旧值
+     *
      * {@inheritDoc}
      *
      * @implSpec
