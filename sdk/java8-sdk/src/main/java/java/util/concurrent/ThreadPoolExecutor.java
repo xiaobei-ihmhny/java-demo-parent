@@ -1055,30 +1055,30 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * @param completedAbruptly if the worker died due to user exception
      */
     private void processWorkerExit(Worker w, boolean completedAbruptly) {
-        if (completedAbruptly) // If abrupt, then workerCount wasn't adjusted
-            decrementWorkerCount();
+        if (completedAbruptly) // If abrupt, then workerCount wasn't adjusted 工作线程因异常情况而退出
+            decrementWorkerCount();// 工作线程数减1(如果工作线程执行时没有出现异常, 在getTask()方法中已经对线程数减1了)
 
         final ReentrantLock mainLock = this.mainLock;
         mainLock.lock();
         try {
-            completedTaskCount += w.completedTasks;
-            workers.remove(w);
+            completedTaskCount += w.completedTasks;// completedTaskCount记录线程池完成的总任务数
+            workers.remove(w);// 从工作线程集合中移除(该工作线程会自动被GC回收)
         } finally {
             mainLock.unlock();
         }
 
-        tryTerminate();
+        tryTerminate();// 根据线程池状态, 判断是否需要终止线程池
 
         int c = ctl.get();
-        if (runStateLessThan(c, STOP)) {
-            if (!completedAbruptly) {
+        if (runStateLessThan(c, STOP)) {// 如果线程池状态为RUNNING/SHUTDOWN
+            if (!completedAbruptly) {// 工作线程为正常退出
                 int min = allowCoreThreadTimeOut ? 0 : corePoolSize;
                 if (min == 0 && ! workQueue.isEmpty())
                     min = 1;
                 if (workerCountOf(c) >= min)
                     return; // replacement not needed
             }
-            addWorker(null, false);
+            addWorker(null, false);// 新建一个工作线程
         }
     }
 
@@ -1100,23 +1100,34 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *         workerCount is decremented
      */
     private Runnable getTask() {
-        boolean timedOut = false; // Did the last poll() time out?
+        boolean timedOut = false; // Did the last poll() time out? 表示上次从阻塞队列中取任务时是否超时
 
         for (;;) {
             int c = ctl.get();
-            int rs = runStateOf(c);
+            int rs = runStateOf(c);// 获取线程池状态
 
             // Check if queue empty only if necessary.
+            /*
+             * 以下IF用于判断哪些情况下不允许再从队列获取任务:
+             * 1. 线程池进入停止状态（STOP/TIDYING/TERMINATED）, 此时即使队列中还有任务未执行, 也不再执行
+             * 2. 线程池非RUNNING状态, 且队列为空
+             */
             if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
-                decrementWorkerCount();
+                decrementWorkerCount();// 工作线程数减1
                 return null;
             }
 
-            int wc = workerCountOf(c);
+            int wc = workerCountOf(c);// 获取工作线程数
 
             // Are workers subject to culling?
+            /*
+             * timed变量用于判断是否需要进行超时控制:
+             * 对于核心线程池中的工作线程, 除非设置了allowCoreThreadTimeOut==true, 否则不会超时回收;
+             * 对于非核心线程池中的工作线程, 都需要超时控制
+             */
             boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
 
+            // 这里主要是当外部通过setMaximumPoolSize方法重新设置了最大线程数时,需要回收多出的工作线程
             if ((wc > maximumPoolSize || (timed && timedOut))
                 && (wc > 1 || workQueue.isEmpty())) {
                 if (compareAndDecrementWorkerCount(c))
@@ -1130,7 +1141,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     workQueue.take();
                 if (r != null)
                     return r;
-                timedOut = true;
+                timedOut = true;// 超时仍未获取到任务
             } catch (InterruptedException retry) {
                 timedOut = false;
             }
@@ -1181,11 +1192,11 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * @param w the worker
      */
     final void runWorker(Worker w) {
-        Thread wt = Thread.currentThread();
-        Runnable task = w.firstTask;
+        Thread wt = Thread.currentThread();// 执行任务的线程
+        Runnable task = w.firstTask;// 任务, 如果是null则从队列取任务
         w.firstTask = null;
-        w.unlock(); // allow interrupts
-        boolean completedAbruptly = true;
+        w.unlock(); // allow interrupts 允许执行线程被中断
+        boolean completedAbruptly = true;// 表示是否因为中断而导致退出
         try {
             while (task != null || (task = getTask()) != null) {
                 w.lock();
@@ -1193,16 +1204,21 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                 // if not, ensure thread is not interrupted.  This
                 // requires a recheck in second case to deal with
                 // shutdownNow race while clearing interrupt
+                /*
+                 * 下面这个if判断的作用如下:
+                 * 1.保证当线程池状态为STOP/TIDYING/TERMINATED时，当前执行任务的线程wt是中断状态(因为线程池处于上述任一状态时，均不能再执行新任务)
+                 * 2.保证当线程池状态为RUNNING/SHUTDOWN时，当前执行任务的线程wt不是中断状态
+                 */
                 if ((runStateAtLeast(ctl.get(), STOP) ||
                      (Thread.interrupted() &&
                       runStateAtLeast(ctl.get(), STOP))) &&
                     !wt.isInterrupted())
                     wt.interrupt();
                 try {
-                    beforeExecute(wt, task);
+                    beforeExecute(wt, task);// 钩子方法，由子类自定义实现
                     Throwable thrown = null;
                     try {
-                        task.run();
+                        task.run();// 执行任务
                     } catch (RuntimeException x) {
                         thrown = x; throw x;
                     } catch (Error x) {
@@ -1210,17 +1226,18 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     } catch (Throwable x) {
                         thrown = x; throw new Error(x);
                     } finally {
-                        afterExecute(task, thrown);
+                        afterExecute(task, thrown);// 钩子方法，由子类自定义实现
                     }
                 } finally {
                     task = null;
-                    w.completedTasks++;
+                    w.completedTasks++;// 完成任务数+1
                     w.unlock();
                 }
             }
+            // 执行到此处, 说明该工作线程自身既没有携带任务, 也没从任务队列中获取到任务
             completedAbruptly = false;
         } finally {
-            processWorkerExit(w, completedAbruptly);
+            processWorkerExit(w, completedAbruptly);// 处理工作线程的退出工作
         }
     }
 
