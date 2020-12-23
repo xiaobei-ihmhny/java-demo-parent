@@ -1,6 +1,7 @@
 package com.xiaobei.mybatis.demo.domain;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -17,6 +18,12 @@ public class User implements Serializable {
     private Integer age;
 
     private String birthPlace;
+
+    /**
+     * 使用 {@link Transient} 来标注表中没有的额外字段
+     */
+    @Transient
+    private String name;
 
     public Integer getId() {
         return id;
@@ -48,6 +55,14 @@ public class User implements Serializable {
 
     public void setBirthPlace(String birthPlace) {
         this.birthPlace = birthPlace;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

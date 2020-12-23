@@ -624,6 +624,7 @@ public class Executors {
 
     /**
      * The default thread factory
+     * 默认的线程工厂
      */
     static class DefaultThreadFactory implements ThreadFactory {
         private static final AtomicInteger poolNumber = new AtomicInteger(1);
