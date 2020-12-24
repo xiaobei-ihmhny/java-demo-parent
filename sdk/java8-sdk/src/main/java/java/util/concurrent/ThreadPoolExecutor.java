@@ -713,6 +713,8 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * Transitions runState to given target, or leaves it alone if
      * already at least the given target.
      *
+     * 将runState转换为给定目标，如果至少已经给定目标，则将其保留。
+     *
      * @param targetState the desired state, either SHUTDOWN or STOP
      *        (but not TIDYING or TERMINATED -- use tryTerminate for that)
      */
@@ -896,6 +898,10 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * drainTo. But if the queue is a DelayQueue or any other kind of
      * queue for which poll or drainTo may fail to remove some
      * elements, it deletes them one by one.
+     *
+     * 通常使用drainTo将任务队列排放到新列表中。
+     * 但是，如果队列是DelayQueue或其他类型的队列，
+     * 但poll或drainTo可能无法删除某些元素，则将它们逐个删除。
      */
     private List<Runnable> drainQueue() {
         BlockingQueue<Runnable> q = workQueue;
@@ -1474,9 +1480,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         mainLock.lock();
         try {
             checkShutdownAccess();
-            advanceRunState(SHUTDOWN);
-            interruptIdleWorkers();
-            onShutdown(); // hook for ScheduledThreadPoolExecutor
+            advanceRunState(SHUTDOWN);// 如果线程池为RUNNING状态, 则切换为SHUTDOWN状态
+            interruptIdleWorkers();// 中断所有空闲线程
+            onShutdown(); // hook for ScheduledThreadPoolExecutor 钩子方法, 由子类实现
         } finally {
             mainLock.unlock();
         }
@@ -1506,9 +1512,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         mainLock.lock();
         try {
             checkShutdownAccess();
-            advanceRunState(STOP);
-            interruptWorkers();
-            tasks = drainQueue();
+            advanceRunState(STOP);// 如果线程池为RUNNING或SHUTDOWN状态, 则切换为STOP状态
+            interruptWorkers();// 中断所有工作线程
+            tasks = drainQueue();// 抽空任务队列中的所有任务
         } finally {
             mainLock.unlock();
         }
@@ -2107,8 +2113,8 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          * @param e the executor attempting to execute this task
          */
         public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-            if (!e.isShutdown()) {
-                r.run();
+            if (!e.isShutdown()) {// 线程池未关闭(RUNNING)
+                r.run();// 执行当前任务
             }
         }
     }
@@ -2178,9 +2184,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          * @param e the executor attempting to execute this task
          */
         public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-            if (!e.isShutdown()) {
-                e.getQueue().poll();
-                e.execute(r);
+            if (!e.isShutdown()) {// 线程池未关闭(RUNNING)
+                e.getQueue().poll();// 丢弃任务队列中的最近任务
+                e.execute(r);// 执行当前任务
             }
         }
     }

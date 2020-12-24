@@ -3,6 +3,7 @@ package com.xiaobei.java.demo.executors.sample3;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -22,6 +23,8 @@ public class ScheduledExecutorServiceDemo {
                 System.out.println("beep");
             }
         };
+        ScheduledThreadPoolExecutor poolExecutor = new ScheduledThreadPoolExecutor(10);
+        poolExecutor.setCorePoolSize(0);
         // 每10秒钟执行一次蜂鸣任务
         final ScheduledFuture<?> beeperHandle =
                 scheduler.scheduleAtFixedRate(beeper, 10, 10, SECONDS);
