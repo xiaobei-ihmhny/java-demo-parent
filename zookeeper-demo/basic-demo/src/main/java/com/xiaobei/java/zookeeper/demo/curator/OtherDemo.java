@@ -3,7 +3,7 @@ package com.xiaobei.java.zookeeper.demo.curator;
 import com.xiaobei.java.zookeeper.demo.curator.framework.CreateClientExamples;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.*;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
