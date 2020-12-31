@@ -15,6 +15,7 @@
         <module>openjdk16-sdk</module>
         <module>openjdk12-sdk</module>
         <module>openjdk15-sdk</module>
+        <module>java9-sdk</module>
     </modules>
 
 
