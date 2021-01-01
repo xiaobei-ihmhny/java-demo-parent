@@ -1,5 +1,6 @@
 package com.xiaobei.java.demo;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -17,5 +18,48 @@ public class Java9Test {
 //        System.out.println(state |= 1 << 2);
 //        System.out.println(state |= 1 << 3);
         System.out.println(state |= 1 << 4);
+    }
+
+    int a;
+
+    User user;
+
+    @BeforeEach
+    void beforeEach() {
+        a = 1;
+        user = new User().setName("huihui");
+    }
+
+    @Test
+    void varTest() {
+        int b;
+        b = a;
+        a = 0;
+        System.out.println(b);
+        User u;
+        u = user;
+        user = null;
+        System.out.println(user);
+        System.out.println(u);
+    }
+
+    static class User {
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public User setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return "User{" +
+                    "name='" + name + '\'' +
+                    '}';
+        }
     }
 }
