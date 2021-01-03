@@ -1,14 +1,11 @@
 plugins {
     id 'java'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE' apply false
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE' apply false
 }
 
 group 'com.xiaobei.java.demo'
 version '1.0-SNAPSHOT'
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
 
 configure(allprojects) { project ->
     /* 添加此插件后可以使用 dependencyManagement  */
@@ -32,13 +29,19 @@ configure(allprojects) { project ->
             //mavenBom "org.apache.dubbo:dubbo-dependencies-zookeeper:2.7.2"
             /* spring版本号与 dubbo 中的 spring版本保持一致 */
             mavenBom "org.springframework:spring-framework-bom:4.3.16.RELEASE"
+            /* dubbo版本控制 TODO 无效*/
+            mavenBom "org.apache.dubbo:dubbo-dependencies-bom:2.7.2"
         }
         dependencies {
+            /* dubbo api相关包定义 TODO 此外配置为何无效*/
+            dependency "com.xiaobei.java.demo:dubbo-api-demo:1.0-SNAPSHOT"
             /* dubbo依赖 */
             //dependency "org.apache.dubbo:dubbo:2.7.2"
             dependencySet(group: 'org.apache.dubbo', version: '2.7.2') {
                 entry 'dubbo'
+                entry 'dubbo-dependencies-bom'
             }
+            dependency "org.apache.dubbo:dubbo-spring-boot-starter:2.7.1"
             /* spring-test相关依赖 */
             /*dependencySet(group: 'org.springframework', version: '4.3.16') {
                 entry 'spring-test'

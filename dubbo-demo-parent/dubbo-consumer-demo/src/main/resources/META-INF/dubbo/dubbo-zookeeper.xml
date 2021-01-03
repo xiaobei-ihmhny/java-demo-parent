@@ -10,7 +10,7 @@
 
     <!-- 配置注册中心 -->
     <dubbo:registry address="zookeeper://192.168.163.101:2181,192.168.163.102:2181,192.168.163.103:2181"
-                    file="/opt/application/dubbo.cache"/><!-- 指定缓存文件的保存位置 -->
+                    file="${user.home}/dubbo.cache"/><!-- 指定缓存文件的保存位置 -->
 
     <!-- 引用远程的 dubbo 服务，并将其注入 spring 容器 -->
     <dubbo:reference interface="com.xiaobei.dubbo.api.IPayService" id="payService" />

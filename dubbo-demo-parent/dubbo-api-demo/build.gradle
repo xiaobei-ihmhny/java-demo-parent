@@ -1,11 +1,27 @@
 plugins {
     id 'java'
+    /* 将当前应用使用jar的方式发布到maven本地仓库 start */
+    id 'java-library'
+    id 'maven-publish'
+    /* 将当前应用使用jar的方式发布到maven本地仓库 end */
 }
 
 group 'com.xiaobei.java.demo'
 version '1.0-SNAPSHOT'
+/* jar发布配置，配置发布当前包到本地maven仓库 */
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 
+    repositories {
+        mavenLocal()
+    }
+}
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+

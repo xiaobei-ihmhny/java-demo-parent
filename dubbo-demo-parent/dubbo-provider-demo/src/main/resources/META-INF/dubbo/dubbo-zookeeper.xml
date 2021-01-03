@@ -11,7 +11,7 @@
 
     <!-- 配置注册中心 -->
     <dubbo:registry address="zookeeper://192.168.163.101:2181,192.168.163.102:2181,192.168.163.103:2181"
-                    file="/opt/application/dubbo.cache"/><!-- 指定缓存文件的保存位置 -->
+                    file="${user.home}/dubbo.cache"/><!-- 指定缓存文件的保存位置 -->
 
     <!-- 指定协议及端口号 -->
     <dubbo:protocol name="dubbo" port="20880"/>

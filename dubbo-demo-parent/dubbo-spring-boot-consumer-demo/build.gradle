@@ -1,0 +1,29 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.4.RELEASE'
+	id 'java'
+}
+
+group = 'com.xiaobei.java.demo'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+dependencies {
+	implementation 'com.xiaobei.java.demo:dubbo-api-demo:1.0-SNAPSHOT'
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	/* apache-dubbo 依赖 */
+	implementation("org.apache.dubbo:dubbo")
+	/* dubbo-spring-boot-starter 依赖 */
+	implementation("org.apache.dubbo:dubbo-spring-boot-starter")
+	/* TODO 为什么需要添加 zookeeper 的依赖？ */
+	implementation("org.apache.zookeeper:zookeeper") {
+		// 排除指定的依赖项
+		exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+	}
+	/* zookeeper-curator 相关依赖 */
+	implementation("org.apache.curator:curator-framework")
+	implementation("org.apache.curator:curator-recipes")
+	/* 日志相关组件 end */
+	/* JUnit 5 测试组件 */
+	testCompile("org.junit.jupiter:junit-jupiter")
+}

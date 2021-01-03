@@ -7,7 +7,9 @@ version '1.0-SNAPSHOT'
 
 
 dependencies {
-    compile(project(":dubbo-api-demo"))
+    //compile(project(":dubbo-api-demo"))
+    // TODO 如何取消版本号配置，直接使用父工程配置？？
+    implementation("com.xiaobei.java.demo:dubbo-api-demo:1.0-SNAPSHOT")
     /* 添加 apache dubbo 依赖  */
     implementation 'org.apache.dubbo:dubbo'
     /* 添加日志相关依赖 */

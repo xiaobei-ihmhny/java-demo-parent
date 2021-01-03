@@ -6,4 +6,6 @@ rootProject.children.each {project ->
 include 'dubbo-consumer-demo'
 include 'dubbo-provider-demo'
 include 'dubbo-api-demo'
+include 'dubbo-spring-boot-provider-demo'
+include 'dubbo-spring-boot-consumer-demo'
 
