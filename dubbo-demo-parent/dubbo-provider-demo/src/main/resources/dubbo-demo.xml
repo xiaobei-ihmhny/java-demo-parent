@@ -1,0 +1,28 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo
+       http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!-- 集群容错（优先级从低到高依次如下） start -->
+    <!-- 1. 服务提供方全局配置 -->
+    <dubbo:provider retries="2"/>
+    <!-- 2. 服务调用方全局配置 -->
+    <dubbo:consumer retries="2"/>
+    <!-- 3. 服务提供方 -->
+    <dubbo:service interface="com.xiaobei.dubbo.api.IPayService" retries="2"/>
+    <!-- 4. 服务调用方 -->
+    <dubbo:reference interface="com.xiaobei.dubbo.api.IPayService" retries="2"/>
+    <!-- 5. 服务提供方——方法级别 -->
+    <dubbo:service interface="com.xiaobei.dubbo.api.IPayService">
+        <dubbo:method name="pay" retries="2"/>
+    </dubbo:service>
+    <!-- 6. 服务调用方——方法级别 -->
+    <dubbo:reference interface="com.xiaobei.dubbo.api.IPayService">
+        <dubbo:method name="pay" retries="2"/>
+    </dubbo:reference>
+    <!-- 集群容错（优先级从低到高依次如上） end -->
+
+</beans>
