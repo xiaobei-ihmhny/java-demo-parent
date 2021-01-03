@@ -1,0 +1,24 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo
+       http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!-- 应用配置信息 -->
+    <dubbo:application name="dubbo-provider-demo"/>
+
+    <!-- 配置注册中心 -->
+    <!-- 使用广播方法，不使用第三方配置中心组件 -->
+    <dubbo:registry address="N/A"/>
+
+    <!-- 指定协议及端口号 -->
+    <dubbo:protocol name="dubbo" port="20880"/>
+
+    <!-- 将 IPayService 的实现类 PayServiceImpl 暴露为 dubbo 服务 -->
+    <dubbo:service interface="com.xiaobei.dubbo.api.IPayService" ref="payService"/>
+
+    <bean class="com.xiaobei.dubbo.provider.PayServiceImpl" id="payService"/>
+
+</beans>

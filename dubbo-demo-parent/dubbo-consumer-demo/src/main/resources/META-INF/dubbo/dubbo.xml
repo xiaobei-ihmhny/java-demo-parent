@@ -1,0 +1,17 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo
+       http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="dubbo-consumer-demo"/>
+
+    <dubbo:registry address="N/A"/>
+
+    <!-- 引用远程的 dubbo 服务，并将其注入 spring 容器 -->
+    <dubbo:reference interface="com.xiaobei.dubbo.api.IPayService" id="payService"
+                     url="dubbo://192.168.163.1:20880/com.xiaobei.dubbo.api.IPayService"/>
+    
+</beans>

@@ -1,0 +1,9 @@
+rootProject.name = 'dubbo-demo-parent'
+rootProject.children.each {project ->
+    project.buildFileName = "${project.name}.gradle"
+}
+
+include 'dubbo-consumer-demo'
+include 'dubbo-provider-demo'
+include 'dubbo-api-demo'
+
