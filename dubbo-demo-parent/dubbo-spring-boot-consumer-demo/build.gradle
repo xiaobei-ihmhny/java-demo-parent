@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '2.1.4.RELEASE'
+	id 'org.springframework.boot' version '2.4.1'
 	id 'java'
 }
 
@@ -10,7 +10,10 @@ sourceCompatibility = '1.8'
 dependencies {
 	implementation 'com.xiaobei.java.demo:dubbo-api-demo:1.0-SNAPSHOT'
 	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		// 排除指定的依赖项
+		exclude group: 'junit', module: 'junit'
+	}
 	/* apache-dubbo 依赖 */
 	implementation("org.apache.dubbo:dubbo")
 	/* dubbo-spring-boot-starter 依赖 */
@@ -26,4 +29,5 @@ dependencies {
 	/* 日志相关组件 end */
 	/* JUnit 5 测试组件 */
 	testCompile("org.junit.jupiter:junit-jupiter")
+	testCompile("org.junit.jupiter:junit-jupiter-engine")
 }
