@@ -8,4 +8,5 @@ include 'dubbo-provider-demo'
 include 'dubbo-api-demo'
 include 'dubbo-spring-boot-provider-demo'
 include 'dubbo-spring-boot-consumer-demo'
+include 'dubbo-source-code-demo'
 

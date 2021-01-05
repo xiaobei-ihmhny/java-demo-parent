@@ -28,7 +28,7 @@ configure(allprojects) { project ->
         imports {
             //mavenBom "org.apache.dubbo:dubbo-dependencies-zookeeper:2.7.2"
             /* spring版本号与 dubbo 中的 spring版本保持一致 */
-            //mavenBom "org.springframework:spring-framework-bom:4.3.16.RELEASE"
+            mavenBom "org.springframework:spring-framework-bom:5.3.2"
             /* dubbo版本控制 TODO 无效*/
             //mavenBom "org.apache.dubbo:dubbo-dependencies-bom:2.7.2"
         }
