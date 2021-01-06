@@ -21,8 +21,8 @@ public class SPIDemo {
     @Test
     void extension() {
         // 静态扩展点
-//        Protocol myProtocol = ExtensionLoader.getExtensionLoader(Protocol.class)
-//                .getExtension("myProtocol");
+        Protocol myProtocol = ExtensionLoader.getExtensionLoader(Protocol.class)
+                .getExtension("dubbo");
         // 自适应扩展点
         ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension();
         Compiler compiler = ExtensionLoader.getExtensionLoader(Compiler.class).getAdaptiveExtension();
