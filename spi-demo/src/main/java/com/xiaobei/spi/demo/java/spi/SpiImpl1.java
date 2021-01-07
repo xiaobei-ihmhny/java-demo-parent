@@ -1,4 +1,4 @@
-package com.xiaobei.java.demo.spi;
+package com.xiaobei.spi.demo.java.spi;
 
 /**
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>

@@ -1,6 +1,6 @@
-package com.xiaobei.java.demo;
+package com.xiaobei.spi.demo.java;
 
-import com.xiaobei.java.demo.spi.SPIService;
+import com.xiaobei.spi.demo.java.spi.SPIService;
 import sun.misc.Service;
 
 import java.util.Iterator;

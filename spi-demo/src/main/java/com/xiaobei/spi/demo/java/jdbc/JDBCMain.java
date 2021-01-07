@@ -1,4 +1,4 @@
-package com.xiaobei.java.demo.jdbc;
+package com.xiaobei.spi.demo.java.jdbc;
 
 import java.sql.*;
 
