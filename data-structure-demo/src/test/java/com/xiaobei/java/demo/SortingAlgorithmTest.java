@@ -1,7 +1,7 @@
 package com.xiaobei.java.demo;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
@@ -17,7 +17,7 @@ public class SortingAlgorithmTest {
 
     private int[] arr;
 
-    @Before
+    @BeforeAll
     public void init() {
         arr = new int[]{1, 10, 3, 5, 9, 12, 7, 11, 14, 19, 17};
     }

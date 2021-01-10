@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+}
+
+apply plugin: 'java'
+
+group 'com.xiaobei.java.demo'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+/* 配置项目编码为 utf-8 */
+tasks.withType(JavaCompile) {
+    options.encoding("UTF-8")
+}
+
+/* 相关变量 */
+ext {
+    junit5Version = '5.7.0'
+}
+
+dependencies {
+    testImplementation "org.junit.jupiter:junit-jupiter:${junit5Version}"
+}
+
+test {
+    useJUnitPlatform()
+}

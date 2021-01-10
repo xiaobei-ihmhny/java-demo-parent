@@ -1,13 +1,11 @@
 package com.xiaobei.java.demo;
 
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
 
-import java.util.ArrayList;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Unit test for simple App.
@@ -16,7 +14,7 @@ import java.util.List;
 public class AppTest {
     private int[] arr;
 
-    @Before
+    @BeforeAll
     public void init() {
         arr = new int[]{1, 10, 3, 5, 9, 12, 7, 11, 14, 19, 17};
     }
