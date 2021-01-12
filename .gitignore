@@ -7,6 +7,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 *.hprof
+gradlew
+gradlew.bat
 
 # Log file
 *.log
