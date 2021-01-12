@@ -2,6 +2,7 @@ package com.xiaobei.java.demo.lock;
 
 import org.junit.Test;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -96,7 +97,10 @@ public class LockDemoTest {
         System.out.println(ToBinaryUtils.LongToBinary64(ADD_WORKER));
     }
 
-
+    @Test
+    public void concurrentHashMapSpeed() {
+        System.out.println(ToBinaryUtils.LongToBinary64(0x7fffffff));
+    }
 
 
     //i 期望转换的整数 bitNum 期望转换的二进制字符串位数

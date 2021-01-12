@@ -2885,7 +2885,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
      * 该结点提供了一系列红黑树相关的操作，以及加锁、解锁操作。
      *
      * TreeNode的代理结点（相当于封装了TreeNode的容器，提供针对红黑树的转换操作和锁控制）
-     * hash值固定为-3
+     * hash值固定为-2
      *
      * TreeNodes used at the heads of bins. TreeBins do not hold user
      * keys or values, but instead point to list of TreeNodes and
