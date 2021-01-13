@@ -25,4 +25,5 @@ public class LessonInfoTest {
         LocalTime time2 = LocalTime.of(1, 40, 52);
         System.out.println(111);
     }
+
 }

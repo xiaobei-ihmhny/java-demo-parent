@@ -18,6 +18,7 @@ import java.util.concurrent.TimeoutException;
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
  * @date 2021-01-12 11:56:56
  */
+@SuppressWarnings("all")
 public class TTLProducer {
 
     public static void main(String[] args) throws IOException, TimeoutException {

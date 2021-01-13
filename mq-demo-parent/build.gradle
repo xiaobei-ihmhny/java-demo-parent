@@ -28,6 +28,7 @@ configure(allprojects) { project ->
         }
         dependencies {
             dependency "log4j:log4j:1.2.12"
+            dependency "org.springframework.amqp:spring-rabbit:2.3.2"
             dependency group: 'com.rabbitmq', name: 'amqp-client', version: '5.10.0'
             dependencySet(group: 'org.slf4j', version: '1.6.6') {
                 entry 'slf4j-api'
