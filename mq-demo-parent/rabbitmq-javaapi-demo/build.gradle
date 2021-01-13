@@ -13,4 +13,8 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter")
     /* spring-test 测试模块 */
     testCompile("org.springframework:spring-test")
+    /* 日志相关组件 start */
+    implementation("log4j:log4j")
+    implementation("org.slf4j:slf4j-api")
+    implementation("org.slf4j:slf4j-log4j12")
 }
