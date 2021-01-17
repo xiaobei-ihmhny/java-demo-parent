@@ -25,11 +25,13 @@ configure(allprojects) { project ->
         imports {
             /* spring版本号与 dubbo 中的 spring版本保持一致 */
             mavenBom "org.springframework:spring-framework-bom:5.3.2"
+            mavenBom 'org.apache.logging.log4j:log4j-bom:2.14.0'
         }
         dependencies {
-            dependency "log4j:log4j:1.2.12"
-            dependency "org.springframework.amqp:spring-rabbit:2.3.2"
+            dependency "org.springframework.amqp:spring-rabbit:2.3.4"
             dependency group: 'com.rabbitmq', name: 'amqp-client', version: '5.10.0'
+            /* log4j2 与 slf4j 整合 */
+            dependency "org.apache.logging.log4j:log4j-slf4j-impl:2.14.0"
             dependencySet(group: 'org.slf4j', version: '1.6.6') {
                 entry 'slf4j-api'
                 entry 'slf4j-log4j12'

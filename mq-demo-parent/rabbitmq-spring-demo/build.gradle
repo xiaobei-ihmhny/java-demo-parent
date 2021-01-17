@@ -2,21 +2,26 @@ plugins {
     id 'java'
 }
 
-group 'com.xiaobei.rabbitmq.demo'
+group 'com.xiaobei.mq.demo'
 version '1.0-SNAPSHOT'
+
 
 dependencies {
     /* java rabbitmq 客户端 */
     // https://mvnrepository.com/artifact/com.rabbitmq/amqp-client
     compile group: 'com.rabbitmq', name: 'amqp-client'
-    /* JUnit 5 测试组件 */
-    testCompile("org.junit.jupiter:junit-jupiter")
-    /* spring-test 测试模块 */
-    testCompile("org.springframework:spring-test")
-    /* spring-context 模块 */
+    /* JUnit 5 测试组件 使用 implementation 级别*/
+    implementation("org.junit.jupiter:junit-jupiter")
+    /* spring-test 测试模块 使用 implementation 级别 */
+    implementation("org.springframework:spring-test")
     implementation("org.springframework:spring-context")
+    implementation("org.springframework.amqp:spring-rabbit")
     /* 日志相关组件 start */
     implementation("org.apache.logging.log4j:log4j-api")
     implementation("org.apache.logging.log4j:log4j-core")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl")
+}
+
+test {
+    useJUnitPlatform()
 }

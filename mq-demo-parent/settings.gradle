@@ -1,4 +1,5 @@
 rootProject.name = 'mq-demo-parent'
 // 所有相关模块
 include 'rabbitmq-javaapi-demo'
+include 'rabbitmq-spring-demo'
 

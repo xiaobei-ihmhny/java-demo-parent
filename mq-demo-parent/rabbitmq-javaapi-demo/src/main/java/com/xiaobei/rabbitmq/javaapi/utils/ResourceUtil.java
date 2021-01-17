@@ -1,5 +1,7 @@
 package com.xiaobei.rabbitmq.javaapi.utils;
 
+import com.rabbitmq.client.ConnectionFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -30,5 +32,19 @@ public class ResourceUtil {
         // ${所在下标 -> } 所在下标
         Map<Integer, Integer> map = new HashMap<>(5 - 1);
         return originalValue;
+    }
+
+    /**
+     * 构建连接工厂
+     * @return
+     */
+    public static ConnectionFactory newFactory() {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setUsername(ResourceUtil.getKey("rabbitmq.username"));
+        factory.setPassword(ResourceUtil.getKey("rabbitmq.password"));
+        factory.setHost(ResourceUtil.getKey("rabbitmq.host"));
+        factory.setPort(Integer.parseInt(ResourceUtil.getKey("rabbitmq.port")));
+        factory.setVirtualHost(ResourceUtil.getKey("rabbitmq.vhost"));
+        return factory;
     }
 }

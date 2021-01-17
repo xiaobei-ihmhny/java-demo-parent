@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!--Configuration后面的status，这个用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出-->
+<!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
+<Configuration status="WARN" monitorInterval="60" xmlns="http://logging.apache.org/log4j/2.0/myconfig">
+    <Properties>
+        <Property name="filePath">d:/logs</Property>
+        <Property name="projectName">rabbitmq-java-demo</Property>
+        <Property name="businessName">business</Property>
+        <Property name="errorName">error</Property>
+        <Property name="infoName">info</Property>
+        <!-- 可以在%与模式字符之间加上修饰符来控制其最小宽度、最大宽度、和文本的对齐方式 -->
+        <!-- %d{yyyy-MM-dd HH:mm:ss.SSS}： 日期(格式：2019-06-19 18:30:35.396) -->
+        <!-- %p: 输出日志信息优先级 -->
+        <!-- %t: 输出产生该日志事件的线程名 -->
+        <!-- %c: 输出日志信息所属的类目，通常就是所在类的全名 -->
+        <!-- %m: 输出代码中指定的消息,产生的日志具体信息 -->
+        <!-- %L: 输出代码中的行号-->
+        <!-- %l: 输出日志事件的发生位置，相当于%C.%M(%F:%L)的组合,包括类目名、发生的线程，以及在代码中的行数 -->
+        <!-- %x: 输出和当前线程相关联的NDC(嵌套诊断环境),尤其用到像java servlets这样的多客户多线程的应用中 -->
+        <!-- %n: 输出一个回车换行符，Windows平台为”\r\n”，Unix平台为”\n”输出日志信息换行 -->
+        <!-- %%: 输出一个”%”字符 -->
+        <Property name="tradeLogPattern">[%style{%d{yyyy-MM-dd HH:mm:ss}}{bright,green}] - [%highlight{%5p}] - [%style{%l}{bright,yellow}] - [%style{%t}{bright,blue}] - %msg%n%style{%throwable}{red}</Property>
+    </Properties>
+    <!--先定义所有的appender-->
+    <Appenders>
+        <!--这个输出控制台的配置-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!--输出日志的格式-->
+            <PatternLayout pattern="${tradeLogPattern}" disableAnsi="false" noConsoleNoAnsi="false"/>
+        </Console>
+        <!-- business日志 -->
+        <!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <RollingFile name="RollingFileBusiness" fileName="${filePath}/${projectName}/${projectName}-${businessName}.log"
+                     filePattern="${filePath}/${projectName}/${projectName}-${businessName}-%d{yyyy-MM-dd}-%i.log">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${tradeLogPattern}"/>
+            <Policies>
+                <!-- 每天滚动生成一个新文件 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="250 MB"/>
+            </Policies>
+            <!-- 用来指定同一个文件夹下最多有几个日志文件时开始删除最旧的，创建新的(通过max属性)。 -->
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile>
+        <!-- error日志 -->
+        <RollingFile name="RollingFileError" fileName="${filePath}/${projectName}/${projectName}-${errorName}.log"
+                     filePattern="${filePath}/${projectName}/${projectName}-${errorName}-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${tradeLogPattern}"/>
+            <Policies>
+                <!-- 每天滚动生成一个新文件 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效-->
+    <Loggers>
+        <!--过滤掉spring和mybatis的一些无用的DEBUG信息-->
+        <Logger name="org.springframework" level="INFO"/>
+        <Logger name="org.mybatis" level="INFO"/>
+        <Root level="DEBUG">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFileBusiness"/>
+            <AppenderRef ref="RollingFileError"/>
+        </Root>
+    </Loggers>
+</Configuration>

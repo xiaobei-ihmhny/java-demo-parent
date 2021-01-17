@@ -22,14 +22,7 @@ import java.util.concurrent.TimeoutException;
 public class TTLProducer {
 
     public static void main(String[] args) throws IOException, TimeoutException {
-        // 构建连接工厂
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setUsername(ResourceUtil.getKey("rabbitmq.username"));
-        factory.setPassword(ResourceUtil.getKey("rabbitmq.password"));
-        factory.setHost(ResourceUtil.getKey("rabbitmq.host"));
-        factory.setPort(Integer.parseInt(ResourceUtil.getKey("rabbitmq.port")));
-        factory.setVirtualHost(ResourceUtil.getKey("rabbitmq.vhost"));
-
+        ConnectionFactory factory = ResourceUtil.newFactory();
         try (Connection connection = factory.newConnection();// 建立连接
              Channel channel = connection.createChannel()) {// 创建消息通道
             String msg = "Hello Rabbitmq";
