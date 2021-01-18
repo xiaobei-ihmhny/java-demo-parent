@@ -31,7 +31,7 @@ public class DeadLetterSample {
 
     @Configuration
     @PropertySource(value = "classpath:META-INF/rabbitmq.properties")
-    static class DeadLetterConfig {
+    public static class DeadLetterConfig {
 
         //=================== rabbitmq common config start ====================
         @Bean(name = "factory")
@@ -62,16 +62,20 @@ public class DeadLetterSample {
 
         //=================== dead letter config start ====================
 
+        public static final String DL_EXCHANGE_NAME = "dl-exchange-spring";
+
+        public static final String DL_QUEUE_NAME = "dl-queue-spring";
+
         @Bean(name = "dlExchange")
-        public TopicExchange dlExchange() {
-            return new TopicExchange("dl-exchange-spring",
+        public DirectExchange dlExchange() {
+            return new DirectExchange(DL_EXCHANGE_NAME,
                     true,
                     false);
         }
 
         @Bean(name = "dlQueue")
         public Queue dlQueue() {
-            return new Queue("dl-queue-spring");
+            return new Queue(DL_QUEUE_NAME);
         }
 
         @Bean(name = "dlBinding")
@@ -79,7 +83,7 @@ public class DeadLetterSample {
             return BindingBuilder
                     .bind(dlQueue())
                     .to(dlExchange())
-                    .with("#");
+                    .with(QUEUE_NAME);
         }
         //=================== dead letter config end ====================
 

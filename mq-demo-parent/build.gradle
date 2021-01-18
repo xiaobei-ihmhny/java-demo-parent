@@ -29,6 +29,7 @@ configure(allprojects) { project ->
         }
         dependencies {
             dependency "org.springframework.amqp:spring-rabbit:2.3.4"
+            dependency "org.springframework.amqp:spring-rabbit-test:2.3.4"
             dependency group: 'com.rabbitmq', name: 'amqp-client', version: '5.10.0'
             /* log4j2 与 slf4j 整合 */
             dependency "org.apache.logging.log4j:log4j-slf4j-impl:2.14.0"

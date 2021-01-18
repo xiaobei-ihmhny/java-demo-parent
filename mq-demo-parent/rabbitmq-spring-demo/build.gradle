@@ -16,6 +16,7 @@ dependencies {
     implementation("org.springframework:spring-test")
     implementation("org.springframework:spring-context")
     implementation("org.springframework.amqp:spring-rabbit")
+    implementation("org.springframework.amqp:spring-rabbit-test")
     /* 日志相关组件 start */
     implementation("org.apache.logging.log4j:log4j-api")
     implementation("org.apache.logging.log4j:log4j-core")
