@@ -2,10 +2,12 @@ package com.xiaobei.java.demo.customize.autoconfig.controller;
 
 import com.xiaobei.java.demo.customize.autoconfig.domain.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -56,5 +58,13 @@ public class HelloWorldController {
     public User getForObject(@PathVariable("userId") Long userId) {
         LOGGER.log(Level.INFO, "用户信息为：" + userId);
         return userMap.get(userId);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/user/save/valid",method = RequestMethod.POST)
+    public String postForObjectValid(@Valid User user, BindingResult result) {
+        LOGGER.log(Level.INFO, "用户信息为：" + user);
+        userMap.put(user.getId(), user);
+        return "user信息保存成功";
     }
 }

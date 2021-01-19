@@ -3,6 +3,9 @@ package com.xiaobei.java.demo.customize.autoconfig.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.xiaobei.java.demo.customize.autoconfig.databinder.BindParam;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -18,8 +21,10 @@ public class User implements Serializable {
 
     @BindParam(name = "user_name")// 绑定请求参数
     @JsonProperty(value = "user_name")//绑定响应参数
+    @NotNull(message = "姓名不能为空")
     private String username;
 
+    @Max(value = 100)
     private Integer age;
 
     private Boolean sex;
