@@ -1,5 +1,8 @@
 package com.xiaobei.java.demo.customize.autoconfig.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.xiaobei.java.demo.customize.autoconfig.databinder.BindParam;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -13,6 +16,8 @@ public class User implements Serializable {
 
     private Long id;
 
+    @BindParam(name = "user_name")// 绑定请求参数
+    @JsonProperty(value = "user_name")//绑定响应参数
     private String username;
 
     private Integer age;

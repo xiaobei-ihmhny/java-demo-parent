@@ -45,7 +45,7 @@ public class HelloWorldController {
 
     @ResponseBody
     @RequestMapping(value = "/user/save",method = RequestMethod.POST)
-    public String postForObject(@RequestBody User user) {
+    public String postForObject(User user) {
         LOGGER.log(Level.INFO, "用户信息为：" + user);
         userMap.put(user.getId(), user);
         return "user信息保存成功";
