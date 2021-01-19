@@ -28,6 +28,8 @@ configure(allprojects) { project ->
             mavenBom 'org.apache.logging.log4j:log4j-bom:2.14.0'
         }
         dependencies {
+            // https://mvnrepository.com/artifact/org.apache.commons/commons-pool2
+            dependency group: 'org.apache.commons', name: 'commons-pool2', version: '2.9.0'
             dependency "org.springframework.amqp:spring-rabbit:2.3.4"
             dependency "org.springframework.amqp:spring-rabbit-test:2.3.4"
             dependency group: 'com.rabbitmq', name: 'amqp-client', version: '5.10.0'
