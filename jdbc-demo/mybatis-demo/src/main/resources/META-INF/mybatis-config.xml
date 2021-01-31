@@ -116,7 +116,7 @@
             / true|false
             / false
          -->
-        <setting name="mapUnderscoreToCamelCase" value="false"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
         <!--
             MyBatis使用本地缓存来防止循环引用并加快重复的嵌套查询。
             默认情况下（SESSION）在会话期间执行的所有查询都将被缓存。
@@ -228,15 +228,10 @@
                 <property name="url" value="${jdbc.url}"/>
                 <property name="username" value="${jdbc.username}"/>
                 <property name="password" value="${jdbc.password}"/>
-<!--                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>-->
-<!--                <property name="url" value="jdbc:mysql://localhost:3306/db1?serverTimezone=GMT"/>-->
-<!--                <property name="username" value="root"/>-->
-<!--                <property name="password" value="root"/>-->
             </dataSource>
         </environment>
     </environments>
     <mappers>
-<!--        <mapper class="com.xiaobei.mybatis.demo.mapper.UserMapper"/>-->
         <mapper resource="META-INF/mapper/UserMapper.xml"/>
     </mappers>
 </configuration>

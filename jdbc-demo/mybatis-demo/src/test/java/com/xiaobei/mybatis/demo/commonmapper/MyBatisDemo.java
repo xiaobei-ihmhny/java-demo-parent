@@ -2,7 +2,7 @@ package com.xiaobei.mybatis.demo.commonmapper;
 
 import com.xiaobei.mybatis.demo.domain.User;
 import com.xiaobei.mybatis.demo.mapper.UserMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.List;
