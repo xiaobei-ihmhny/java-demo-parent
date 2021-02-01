@@ -1,9 +1,8 @@
 package com.xiaobei.jdbc.demo;
 
-import com.xiaobei.jdbc.demo.dbutils.AnnotationDemo;
 import com.xiaobei.jdbc.demo.dbutils.ColumnName;
 import com.xiaobei.jdbc.demo.domain.User;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

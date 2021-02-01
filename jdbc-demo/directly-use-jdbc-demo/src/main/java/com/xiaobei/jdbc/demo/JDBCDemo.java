@@ -14,15 +14,17 @@ public class JDBCDemo {
      */
     public static void main(String[] args) {
         String sql = "SELECT * FROM user";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql:///db1?serverTimezone=GMT", "root", "root");
+        try (Connection connection = DriverManager.getConnection(
+                "jdbc:mysql:///db1?serverTimezone=GMT", "root", "root");
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.execute();
-            ResultSet resultSet = preparedStatement.getResultSet();
-            while (resultSet.next()) {
-                final int id = resultSet.getInt("id");
-                final String username = resultSet.getString("username");
-                final int age = resultSet.getInt("age");
-                System.out.printf("id = %d, username = %s, age = %d\n", id, username, age);
+            try(ResultSet resultSet = preparedStatement.getResultSet()) {
+                while (resultSet.next()) {
+                    final int id = resultSet.getInt("id");
+                    final String username = resultSet.getString("username");
+                    final int age = resultSet.getInt("age");
+                    System.out.printf("id = %d, username = %s, age = %d\n", id, username, age);
+                }
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

@@ -1,6 +1,5 @@
 package com.xiaobei.jdbc.demo.jdbctemplate;
 
-import com.xiaobei.jdbc.demo.dbutils.DbUtilsDemo;
 import com.xiaobei.jdbc.demo.domain.User;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -31,7 +29,6 @@ public class JdbcTemplateDemo {
     public DataSource dataSource(@Value("${jdbc.url}") String url,
                                  @Value("${jdbc.username}") String username,
                                  @Value("${jdbc.password}") String password) {
-//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(url);
         dataSource.setUsername(username);

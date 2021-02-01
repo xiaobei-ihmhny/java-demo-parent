@@ -1,4 +1,4 @@
-package com.xiaobei.jdbc.demo.dbutils;
+package com.xiaobei.jdbc.demo;
 
 import org.springframework.core.annotation.AliasFor;
 

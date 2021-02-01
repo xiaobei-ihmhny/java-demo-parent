@@ -69,7 +69,7 @@ public class AnnotationBeanProcessor extends BeanProcessor {
      * @return
      */
     private <T> void columnToPropertyByAnnotations(Class<? extends T> type) {
-        Field[] declaredFields = User.class.getDeclaredFields();
+        Field[] declaredFields = type.getDeclaredFields();
         for (Field field : declaredFields) {
             ColumnName annotation = field.getAnnotation(ColumnName.class);
             if(annotation != null) {

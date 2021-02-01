@@ -45,6 +45,7 @@ public class User {
         return birthPlace;
     }
 
+    @ColumnName(value = "birth_place")
     public void setBirthPlace(String birthPlace) {
         this.birthPlace = birthPlace;
     }
