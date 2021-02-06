@@ -1,0 +1,6 @@
+rootProject.name = 'elasticsearch-demo-parent'
+rootProject.children.each {project ->
+    project.buildFileName = "${project.name}.gradle"
+}
+include 'elasticsearch-javaapi-demo'
+

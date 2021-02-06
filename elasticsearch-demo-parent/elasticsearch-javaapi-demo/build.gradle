@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'com.xiaobei.es.demo.javaapi'
+version '1.0-SNAPSHOT'
+
+
+dependencies {
+    /* elasticsearch依赖 */
+    compile group: 'org.elasticsearch', name: 'elasticsearch'
+    compile group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}
