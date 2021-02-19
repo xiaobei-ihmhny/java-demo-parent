@@ -28,6 +28,7 @@ configure(allprojects) { project ->
         imports {
             /* spring版本号与 dubbo 中的 spring版本保持一致 */
             mavenBom "org.springframework:spring-framework-bom:5.3.2"
+            mavenBom "org.springframework.boot:spring-boot-dependencies:2.4.1"
         }
         dependencies {
             dependency "log4j:log4j:1.2.12"
@@ -42,6 +43,12 @@ configure(allprojects) { project ->
                 entry 'junit-jupiter-engine'
                 entry 'junit-jupiter-params'
             }
+            dependencySet(group: 'ch.qos.logback', version: '1.2.3') {
+                entry 'logback-core'
+                entry 'logback-classic'
+            }
+            dependency 'org.apache.commons:commons-lang3:3.8'
+            dependency 'com.alibaba:fastjson:1.2.70'
             dependency group: 'org.elasticsearch', name: 'elasticsearch', version: '7.10.2'
             dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.10.2'
         }

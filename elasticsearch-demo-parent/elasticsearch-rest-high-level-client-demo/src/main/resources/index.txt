@@ -1,0 +1,41 @@
+curl -X PUT "localhost:9200/book" -H 'Content-Type: application/json' -d'
+{
+    "mappings":{
+        "_doc":{
+            "properties":{
+                "id":{
+                    "type":"integer"
+                },
+                "name":{
+                    "type":"text",
+                    "analyzer":"ik_max_word",
+                    "search_analyzer":"ik_max_word"
+                },
+                "author":{
+                    "type":"text",
+                    "analyzer":"ik_max_word",
+                    "search_analyzer":"ik_max_word"
+                },
+                "category":{
+                    "type":"integer"
+                },
+                "price":{
+                    "type":"double"
+                },
+                "status":{
+                    "type":"short"
+                },
+                "sellReason":{
+                    "type":"text",
+                    "analyzer":"ik_max_word",
+                    "search_analyzer":"ik_max_word"
+                },
+                "sellTime":{
+                    "type":"date",
+                    "format":"yyyy-MM-dd"
+                }
+            }
+        }
+    }
+}
+'

@@ -3,4 +3,5 @@ rootProject.children.each {project ->
     project.buildFileName = "${project.name}.gradle"
 }
 include 'elasticsearch-javaapi-demo'
+include 'elasticsearch-rest-high-level-client-demo'
 
