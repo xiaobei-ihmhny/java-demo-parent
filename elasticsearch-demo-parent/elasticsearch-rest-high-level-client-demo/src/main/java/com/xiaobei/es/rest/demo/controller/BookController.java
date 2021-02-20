@@ -9,6 +9,7 @@ import com.xiaobei.es.rest.demo.service.BookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 /**
  * TODO
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
  * @author <a href="mailto:legend0508@163.com">xiaobei-ihmhny</a>
  * @date 2021-02-19 20:08:08
  */
+@RestController
+@RequestMapping("/book")
 public class BookController {
 
     private static final Logger log = LoggerFactory.getLogger(BookController.class);

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>图书列表</title>
+
+    <link rel="stylesheet" href="/bootstrap-4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bootstrap-table/bootstrap-table.css">
+
+    <script src="jquery-3.3.1.min.js"></script>
+    <script src="/bootstrap-4/js/bootstrap.min.js"></script>
+    <script src="/bootstrap-table/bootstrap-table.js"></script>
+    <script src="/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+    <script>
+        $(function(){
+
+            $('#table').bootstrapTable({
+                url: '/book/list',
+                method: 'get',
+                sidePagination: 'server',
+                responseHandler: function(res) {  // 加载服务器数据之前的处理程序，可以用来格式化数据。参数：res为从服务器请求到的数据。
+                    var result = {};
+                    result.total = res.data.totalCount;
+                    result.rows = res.data.pageList;
+                    return result;
+                },
+                pagination: true,
+                pageSize: 3, // 初始PageSize
+                queryParams: function(params) {
+                    var req = {
+                        pageSize: params.limit,
+                        pageNo: params.offset + 1
+                    };
+                    return req;
+                },
+                striped: true,
+                search: true,
+                columns: [{
+                    field: 'id',
+                    title: 'ID'
+                }, {
+                    field: 'name',
+                    title: '名称'
+                }, {
+                    field: 'author',
+                    title: '作者'
+                }, {
+                    field: 'price',
+                    title: '单价'
+                }, {
+                    field: 'sellTime',
+                    title: '上架时间'
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    formatter: function(value) {
+                        if (value == 1) {
+                            return '<span style="color: green">可售</span>';
+                        } else {
+                            return '<span style="color: red">不可售</span>';
+                        }
+                    }
+                }, {
+                    field: 'category',
+                    title: '分类',
+                    formatter: function(value) {
+                        if (value == 10010) {
+                            return '中国当代小说';
+                        } else if (value == 10011) {
+                            return '武侠小说';
+                        } else if (value == 10012) {
+                            return '爱情小说';
+                        } else if (value == 10013) {
+                            return '中国当代随笔';
+                        }
+                    }
+                }, {
+                    field: 'sellReason',
+                    title: '上架理由'
+                }, {
+                    title: '操作',
+                    formatter: function() {
+                        return '<a href="#">修改</a> <a href="#">删除</a>';
+                    }
+                }
+                ]
+            });
+
+        });
+    </script>
+</head>
+<body>
+<div class="table-responsive" style="padding: 10px 30px">
+    <table id="table" class="table text-nowrap"></table>
+</div>
+</body>
+</html>
