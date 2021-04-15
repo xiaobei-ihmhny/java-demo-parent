@@ -6,12 +6,10 @@ import org.springframework.util.StringUtils;
 import java.io.*;
 import java.nio.file.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 /**
- * TODO
- *
+ * {@link FileWatcher} 是实际处理类
  * @author <a href="mailto:legend0508@163.com">xiaobei-ihmhny</a>
  * @date 2021-04-14 22:01:01
  */
@@ -19,15 +17,20 @@ public class FileWatcher {
     /**
      * 监视的文件目录
      */
-    private Path watchDirectory;
+    private final Path watchDirectory;
     /**
      * 监视的文件类型正则表达式
      */
-    private FilenameFilter filenameFilter;
+    private final FilenameFilter filenameFilter;
     /**
      * 监视到的文件监听器
      */
-    private FileWatchedListener fileWatchedListener;
+    private final FileWatchedListener fileWatchedListener;
+
+    /**
+     * 监听的文件名称
+     */
+    private final String watchedFileName;
 
     /**
      * 当前日志变动的行号
@@ -49,14 +52,29 @@ public class FileWatcher {
      */
     private Long lastLogLineFirstCharIndex;
 
-    public FileWatcher(Path watchDirectory, FilenameFilter filenameFilter, FileWatchedListener fileWatchedListener) {
+    public FileWatcher(Path watchDirectory,
+                       FilenameFilter filenameFilter,
+                       FileWatchedListener fileWatchedListener) {
         this.watchDirectory = watchDirectory;
         this.filenameFilter = filenameFilter;
         this.fileWatchedListener = fileWatchedListener;
+        this.watchedFileName = null;
     }
 
     public FileWatcher(Path watchDirectory, FileWatchedListener fileWatchedListener) {
         this(watchDirectory, null, fileWatchedListener);
+    }
+
+    public FileWatcher(String filePath) {
+        int fileAndDirIndex = filePath.lastIndexOf(File.separator);
+        if(fileAndDirIndex == -1) {
+            throw new IllegalArgumentException("文件路径异常：" + filePath);
+        }
+        String path = filePath.substring(0, fileAndDirIndex);
+        this.watchedFileName = filePath.substring(fileAndDirIndex + 1);
+        this.watchDirectory = Paths.get(path);
+        this.fileWatchedListener = new FileWatchedListenerAdapter();
+        this.filenameFilter = null;
     }
 
     /**
@@ -71,9 +89,7 @@ public class FileWatcher {
                     return filenameFilter.accept(this.watchDirectory.toFile(), fileName);
                 });
             }
-            stream.forEach(path -> {
-                this.fileWatchedListener.onCreate(path);
-            });
+            stream.forEach(this.fileWatchedListener::onCreate);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -136,6 +152,9 @@ public class FileWatcher {
                         continue;
                     }
                     String fileName = event.context().toString();
+                    if(watchedFileName != null && !watchedFileName.equals(fileName)) {
+                        continue;
+                    }
                     //文件名不匹配
                     if (this.filenameFilter != null && !this.filenameFilter.accept(this.watchDirectory.toFile(), fileName)) {
                         continue;
@@ -145,7 +164,7 @@ public class FileWatcher {
                         try {
                             File file = path.toFile();
                             String outStr = getOutStr(file, file.length(), "UTF-8");
-                            if(!StringUtils.isEmpty(outStr)) {
+                            if(StringUtils.hasText(outStr)) {
                                 this.fileWatchedListener.onModify(outStr);
                             }
                         } catch (IOException e) {
@@ -169,52 +188,6 @@ public class FileWatcher {
         }
     }
 
-
-    public static String readLastLine(File file, String charset) throws IOException {
-        if (!file.exists() || file.isDirectory() || !file.canRead())
-            return null;
-        RandomAccessFile raf = null;
-        try {
-            raf = new RandomAccessFile(file, "r");
-            long len = raf.length();//当前字符数
-            if (len == 0L)
-                return "";
-            long pos = len - 1;
-            while (pos > 0) {
-                pos--;
-                raf.seek(pos);
-                if (raf.readByte() == '\n')
-                    break;
-            }
-            // 当前行首字符位置
-            System.out.println("当前行首字符位置为：" + pos);
-            if (pos == 0)
-                raf.seek(0);
-
-            byte[] bytes = new byte[(int) (len - pos)];
-            raf.read(bytes);
-
-            if (charset == null) {
-                return new String(bytes);
-            }
-
-
-            String lineFirstChar = new String(bytes, charset);
-            System.out.println("当前行首字符为：" + lineFirstChar);
-            return lineFirstChar;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            if (raf != null) {
-                try {
-                    raf.close();
-                } catch (Exception e2) {
-                }
-            }
-        }
-        return null;
-    }
-
     public String getOutStr(File file, long fileLength, String charset) throws IOException {
         if(file.exists()){
             LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(file));
@@ -233,7 +206,7 @@ public class FileWatcher {
                 currentLineFirstCharIndex = getLineFirstCharIndex(file);
             }
             // 思路：记录当前行的首个字符位置以及上次日志输出时的首个字符位置，然后将这其中的内容全部输出
-            if(currentLineNum - lastLogLineNum.get() > 1) {// 说明至少打印了完整的一行日志数据了，可以考虑向外输出了
+            if(currentLineNum - lastLogLineNum.get() > 0) {// 说明至少打印了完整的一行日志数据了，可以考虑向外输出了
                 // 更新lastLogLineNum
                 lastLogLineNum.set(currentLineNum);
                 // 返回指定的字符串
@@ -269,7 +242,7 @@ public class FileWatcher {
         RandomAccessFile raf = new RandomAccessFile(file, "r");
         long len = raf.length();//当前字符数
         if (len == 0L)
-            /*return ""*/;
+            return 0L;
         long pos = len - 1;
         while (pos > 0) {
             pos--;
@@ -280,13 +253,4 @@ public class FileWatcher {
         return pos;
     }
 
-    public static void main(String[] args) {
-        try {
-            Path path = Paths.get("D:\\logs");
-            FileWatcher fileWatchedService = new FileWatcher(path, new FileWatchedListenerAdapter());
-            fileWatchedService.watchFileModify();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
