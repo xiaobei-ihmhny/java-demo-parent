@@ -1,6 +1,7 @@
 package com.xiaobei.log.realtime;
 
 import com.sun.nio.file.SensitivityWatchEventModifier;
+import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.nio.file.*;
@@ -31,22 +32,22 @@ public class FileWatcher {
     /**
      * 当前日志变动的行号
      */
-    private Integer currentLineNum;
+    private Integer currentLineNum = 0;
 
     /**
      * 当前日志变动的行的行首字符的位置
      */
-    private Integer currentLineFirstCharIndex;
+    private Long currentLineFirstCharIndex = 0L;
 
     /**
      * 上次日志结束时的行号
      */
-    private AtomicInteger lastLogLineNum;
+    private AtomicInteger lastLogLineNum = new AtomicInteger(0);
 
     /**
      * 上一次日志结束时的行的首字符的位置
      */
-    private Integer lastLogLineFirstCharIndex;
+    private Long lastLogLineFirstCharIndex;
 
     public FileWatcher(Path watchDirectory, FilenameFilter filenameFilter, FileWatchedListener fileWatchedListener) {
         this.watchDirectory = watchDirectory;
@@ -143,10 +144,10 @@ public class FileWatcher {
                     if (eventKind == StandardWatchEventKinds.ENTRY_MODIFY) {
                         try {
                             File file = path.toFile();
-//                            String currentLastNum = readLastLine(file, "UTF-8");
-//                            System.out.println(currentLastNum);
-                            System.out.println("line: " + getLineNum(file, file.length()));
-                            this.fileWatchedListener.onModify(path);
+                            String outStr = getOutStr(file, file.length(), "UTF-8");
+                            if(!StringUtils.isEmpty(outStr)) {
+                                this.fileWatchedListener.onModify(outStr);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -190,7 +191,7 @@ public class FileWatcher {
             if (pos == 0)
                 raf.seek(0);
 
-            byte[] bytes = new byte[(int) (pos - 1)];
+            byte[] bytes = new byte[(int) (len - pos)];
             raf.read(bytes);
 
             if (charset == null) {
@@ -214,20 +215,69 @@ public class FileWatcher {
         return null;
     }
 
-    public Integer getLineNum(File file, long fileLength) throws IOException {
-        Integer linenumber = 0;
+    public String getOutStr(File file, long fileLength, String charset) throws IOException {
         if(file.exists()){
             LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(file));
             lineNumberReader.skip(fileLength);
             int lines = lineNumberReader.getLineNumber();
-            // 保存当前行数据
-            currentLineNum = lines;
             int lastLogLine = lastLogLineNum.get();
+            if(currentLineNum == 0
+                    || lastLogLine == 0
+                    || currentLineNum < lastLogLine) {// 说明日志又开始从头写了
+                lastLogLineNum.set(lines);
+                lastLogLineFirstCharIndex = getLineFirstCharIndex(file);
+            }
+            // 保存当前行数据
+            if(lines > currentLineNum) {// 说明出现的新的一行数据了，此时需要记录行首字符下标
+                currentLineNum = lines;
+                currentLineFirstCharIndex = getLineFirstCharIndex(file);
+            }
             // 思路：记录当前行的首个字符位置以及上次日志输出时的首个字符位置，然后将这其中的内容全部输出
+            if(currentLineNum - lastLogLineNum.get() > 1) {// 说明至少打印了完整的一行日志数据了，可以考虑向外输出了
+                // 更新lastLogLineNum
+                lastLogLineNum.set(currentLineNum);
+                // 返回指定的字符串
+                String resultStr;
+                RandomAccessFile outFile = new RandomAccessFile(file, "r");
+                int currentIndex = currentLineFirstCharIndex.intValue();
+                int lastIndex = lastLogLineFirstCharIndex.intValue();
+                byte[] bytes = new byte[currentIndex - lastIndex];
+                outFile.seek(lastIndex);
+                outFile.read(bytes, 0, currentIndex - lastIndex);
+                if (charset == null) {
+                    resultStr = new String(bytes);
+                }else {
+                    resultStr = new String(bytes, charset);
+                }
+                // 重置lastCharIndex
+                lastLogLineFirstCharIndex = getLineFirstCharIndex(file);
+                return resultStr;
+            }
             lineNumberReader.close();
-            return lines;
+            return null;
         }
-        return linenumber;
+        return null;
+    }
+
+    /**
+     * 获取行首字符下标
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    private static Long getLineFirstCharIndex(File file) throws IOException {
+        RandomAccessFile raf = new RandomAccessFile(file, "r");
+        long len = raf.length();//当前字符数
+        if (len == 0L)
+            /*return ""*/;
+        long pos = len - 1;
+        while (pos > 0) {
+            pos--;
+            raf.seek(pos);
+            if (raf.readByte() == '\n')
+                break;
+        }
+        return pos;
     }
 
     public static void main(String[] args) {

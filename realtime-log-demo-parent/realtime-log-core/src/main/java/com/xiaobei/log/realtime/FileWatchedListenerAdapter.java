@@ -44,5 +44,10 @@ public class FileWatchedListenerAdapter implements FileWatchedListener {
         System.out.println(String.format("文件【%s】被丢弃，时间：%s", file, LocalDateTime.now()));
     }
 
+    @Override
+    public void onModify(String str) {
+        System.out.println("当前新的日志内容为：" + str);
+    }
+
 
 }

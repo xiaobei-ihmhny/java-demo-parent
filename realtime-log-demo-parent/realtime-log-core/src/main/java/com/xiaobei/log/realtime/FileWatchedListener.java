@@ -33,4 +33,6 @@ public interface FileWatchedListener {
      * @param file
      */
     void onOverflowed(Path file);
+
+    void onModify(String str);
 }
