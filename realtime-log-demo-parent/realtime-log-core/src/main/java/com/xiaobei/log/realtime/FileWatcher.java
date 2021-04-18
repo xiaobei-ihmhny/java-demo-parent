@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * @author <a href="mailto:legend0508@163.com">xiaobei-ihmhny</a>
  * @date 2021-04-14 22:01:01
  */
-public class FileWatcher {
+public class FileWatcher implements Runnable {
     /**
      * 监视的文件目录
      */
@@ -74,6 +74,18 @@ public class FileWatcher {
         this.watchedFileName = filePath.substring(fileAndDirIndex + 1);
         this.watchDirectory = Paths.get(path);
         this.fileWatchedListener = new FileWatchedListenerAdapter();
+        this.filenameFilter = null;
+    }
+
+    public FileWatcher(String filePath, FileWatchedListener fileWatchedListener) {
+        int fileAndDirIndex = filePath.lastIndexOf(File.separator);
+        if(fileAndDirIndex == -1) {
+            throw new IllegalArgumentException("文件路径异常：" + filePath);
+        }
+        String path = filePath.substring(0, fileAndDirIndex);
+        this.watchedFileName = filePath.substring(fileAndDirIndex + 1);
+        this.watchDirectory = Paths.get(path);
+        this.fileWatchedListener = fileWatchedListener;
         this.filenameFilter = null;
     }
 
@@ -253,4 +265,8 @@ public class FileWatcher {
         return pos;
     }
 
+    @Override
+    public void run() {
+        watchFileModify();
+    }
 }

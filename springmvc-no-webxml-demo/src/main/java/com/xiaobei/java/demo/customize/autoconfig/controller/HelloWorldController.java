@@ -1,17 +1,20 @@
 package com.xiaobei.java.demo.customize.autoconfig.controller;
 
 import com.xiaobei.java.demo.customize.autoconfig.domain.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author <a href="https://github.com/xiaobei-ihmhny">xiaobei-ihmhny</a>
@@ -20,13 +23,14 @@ import java.util.logging.Logger;
 @Controller
 public class HelloWorldController {
 
-    private static final Logger LOGGER = Logger.getLogger(HelloWorldController.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldController.class.getName());
 
     private final Map<Long, User> userMap = new HashMap<>(16);
 
     @RequestMapping
     @ResponseBody
     public String helloWorld() {
+        LOGGER.info("hello world");
         return "hello world";
     }
 
@@ -48,7 +52,7 @@ public class HelloWorldController {
     @ResponseBody
     @RequestMapping(value = "/user/save",method = RequestMethod.POST)
     public String postForObject(User user) {
-        LOGGER.log(Level.INFO, "用户信息为：" + user);
+        LOGGER.info("用户信息为：" + user);
         userMap.put(user.getId(), user);
         return "user信息保存成功";
     }
@@ -56,14 +60,14 @@ public class HelloWorldController {
     @ResponseBody
     @RequestMapping(value = "/user/{userId}",method = RequestMethod.GET)
     public User getForObject(@PathVariable("userId") Long userId) {
-        LOGGER.log(Level.INFO, "用户信息为：" + userId);
+        LOGGER.info("用户信息为：" + userId);
         return userMap.get(userId);
     }
 
     @ResponseBody
     @RequestMapping(value = "/user/save/valid",method = RequestMethod.POST)
     public String postForObjectValid(@Valid User user, BindingResult result) {
-        LOGGER.log(Level.INFO, "用户信息为：" + user);
+        LOGGER.info("用户信息为：" + user);
         userMap.put(user.getId(), user);
         return "user信息保存成功";
     }

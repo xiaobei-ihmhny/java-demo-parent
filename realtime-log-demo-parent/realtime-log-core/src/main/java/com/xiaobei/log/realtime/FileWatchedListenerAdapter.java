@@ -20,10 +20,6 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class FileWatchedListenerAdapter implements FileWatchedListener {
 
-    private AtomicLong currentLineNum = new AtomicLong(0);
-
-    private Long lastTimeLineNum;
-
     @Override
     public void onCreate(Path file) {
         System.out.println(String.format("文件【%s】被创建，时间：%s", file, LocalDateTime.now()));
