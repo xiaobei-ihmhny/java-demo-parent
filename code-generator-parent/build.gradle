@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE' apply false
+}
+
+group 'com.xiaobei.code.generator'
+version '1.0-SNAPSHOT'
+
+configure(allprojects) { project ->
+    /* 添加此插件后可以使用 dependencyManagement  */
+    apply plugin: "io.spring.dependency-management"
+    /* 所有子模块的仓库配置 */
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    /* 配置项目编码为 utf-8 */
+    tasks.withType(JavaCompile) {
+        options.encoding("UTF-8")
+    }
+    compileJava.options.encoding = 'UTF-8'
+    compileTestJava.options.encoding = 'UTF-8'
+    dependencyManagement {
+        imports {
+            /* spring版本号与 dubbo 中的 spring版本保持一致 */
+            mavenBom "org.springframework:spring-framework-bom:5.3.2"
+        }
+        dependencies {
+            dependencySet(group: 'ch.qos.logback', version: '1.2.3') {
+                entry 'logback-core'
+                entry 'logback-classic'
+            }
+            /* junit5 测试相关 */
+            dependencySet(group: 'org.junit.jupiter', version: '5.7.0') {
+                entry 'junit-jupiter'
+                entry 'junit-jupiter-api'
+                entry 'junit-jupiter-engine'
+                entry 'junit-jupiter-params'
+            }
+            /* Mybatis-plus代码生成依赖 */
+            dependency 'com.baomidou:mybatis-plus-generator:3.4.1'
+            /* velocity模板引擎 */
+            dependency 'org.apache.velocity:velocity-engine-core:2.3'
+            /* freemarker模板引擎 */
+            dependency 'org.freemarker:freemarker:2.3.31'
+            /* mysql驱动 */
+            dependency 'mysql:mysql-connector-java:8.0.11'
+        }
+    }
+}

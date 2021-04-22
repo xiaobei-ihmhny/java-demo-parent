@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group 'com.xiaobei.code.generator'
+version '1.0-SNAPSHOT'
+
+
+dependencies {
+    compile 'org.springframework:spring-context'
+    /* Mybatis-plus代码生成依赖 */
+    compile 'com.baomidou:mybatis-plus-generator'
+    compile 'ch.qos.logback:logback-core'
+    compile 'ch.qos.logback:logback-classic'
+    /* freemarker模板引擎 */
+    compile 'org.freemarker:freemarker'
+    /* mysql驱动 */
+    compile 'mysql:mysql-connector-java'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}
