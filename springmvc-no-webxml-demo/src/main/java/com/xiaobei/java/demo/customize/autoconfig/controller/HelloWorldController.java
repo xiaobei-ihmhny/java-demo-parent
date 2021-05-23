@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+//import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +30,9 @@ public class HelloWorldController {
     @RequestMapping
     @ResponseBody
     public String helloWorld() {
-        LOGGER.info("hello world");
+        for (int i = 0; i < 1000; i++) {
+            LOGGER.info("hello world_" + i);
+        }
         return "hello world";
     }
 
@@ -66,7 +68,7 @@ public class HelloWorldController {
 
     @ResponseBody
     @RequestMapping(value = "/user/save/valid",method = RequestMethod.POST)
-    public String postForObjectValid(@Valid User user, BindingResult result) {
+    public String postForObjectValid(/*@Valid */User user, BindingResult result) {
         LOGGER.info("用户信息为：" + user);
         userMap.put(user.getId(), user);
         return "user信息保存成功";

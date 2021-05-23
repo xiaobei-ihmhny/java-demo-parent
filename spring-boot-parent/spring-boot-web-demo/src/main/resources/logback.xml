@@ -37,7 +37,7 @@
             <maxIndex>10</maxIndex>
         </rollingPolicy>
         <triggeringPolicy
-            class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <maxFileSize>100MB</maxFileSize>
         </triggeringPolicy>
         <encoder>
@@ -48,17 +48,17 @@
 
     <appender name="PositionAppender"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>d:/logs/business.log</file>
-<!--        <file>/opt/application/logs/business.log</file>-->
+<!--                <file>d:/logs/business.log</file>-->
+        <file>/opt/application/logs/business.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>d:/logs/business.%i.log</fileNamePattern>
-<!--            <fileNamePattern>/opt/application/logs/business.%i.log</fileNamePattern>-->
+<!--                        <fileNamePattern>d:/logs/business.%i.log</fileNamePattern>-->
+            <fileNamePattern>/opt/application/logs/business.%i.log</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>100</maxIndex>
         </rollingPolicy>
         <triggeringPolicy
-            class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>100MB</maxFileSize>
+                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>1MB</maxFileSize>
         </triggeringPolicy>
         <encoder>
             <pattern>%d{yyy-MM-dd HH:mm:ss,GMT+8} - %m%n</pattern>
